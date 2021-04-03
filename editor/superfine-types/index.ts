@@ -30,7 +30,7 @@ declare module "superfine" {
 
   type TextNode = {
     readonly tag: string;
-    readonly props: {};
+    readonly props: Record<string, never>;
     readonly key: undefined;
     readonly children: ReadonlyArray<never>;
     readonly type: 3;
