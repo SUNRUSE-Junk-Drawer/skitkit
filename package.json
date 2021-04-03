@@ -11,11 +11,11 @@
   },
   "license": "MIT",
   "devDependencies": {
+    "@types/babel__core": "7.1.14",
     "@types/jasmine": "3.6.9",
     "@types/mini-css-extract-plugin": "0.9.1",
     "@types/node": "13.13.48",
     "@types/rewire": "2.5.28",
-    "@types/superfine": "7.0.1",
     "@types/uuid": "8.3.0",
     "@types/workbox-webpack-plugin": "5.1.6",
     "@typescript-eslint/eslint-plugin": "2.34.0",
@@ -37,18 +37,20 @@
     "rewire": "5.0.0",
     "sass": "1.32.8",
     "sass-loader": "9.0.3",
-    "superfine": "7.0.0",
+    "superfine": "8.2.0",
+    "ts-node": "9.1.1",
     "typescript": "4.2.3",
     "webpack": "4.46.0",
     "webpack-cli": "3.3.12",
     "workbox-webpack-plugin": "5.1.4"
   },
   "scripts": {
+    "buildPatchSuperfine": "npx ts-node patch-superfine.ts",
     "buildClean": "del-cli \"**/*.js\" \"**/*.d.ts\" \"!**/node_modules/**/*\"",
     "buildTypeScript": "tsc",
     "buildJasmineUnit": "jasmine --config=unit.jasmine.json",
-    "buildNyc": "nyc --check-coverage --all --exclude \"**/*.ts\" --exclude \"**/*.d.ts\" --exclude \"**/unit.*\" --exclude \"editor/index.js\" --exclude \"editor/webpack.config.js\" --lines 100 --functions 100 --branches 100 --statements 100 npm run-script buildJasmineUnit",
-    "test": "npm-run-all buildClean buildTypeScript buildNyc",
+    "buildNyc": "nyc --check-coverage --all --exclude \"patch-superfine.*\" --exclude \"**/*.ts\" --exclude \"**/*.d.ts\" --exclude \"**/unit.*\" --exclude \"editor/index.js\" --exclude \"editor/webpack.config.js\" --lines 100 --functions 100 --branches 100 --statements 100 npm run-script buildJasmineUnit",
+    "test": "npm-run-all buildPatchSuperfine buildClean buildTypeScript buildNyc",
     "lint": "eslint \"**/*.ts\"",
     "webpack": "webpack --mode=production --config ./editor/webpack.config.js"
   },
@@ -57,6 +59,7 @@
     "**/*.d.ts",
     "!**/unit.js",
     "!**/unit.d.ts",
+    "!patch-superfine.*",
     "!editor"
   ],
   "dependencies": {
