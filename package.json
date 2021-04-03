@@ -60,7 +60,7 @@
     "!editor"
   ],
   "dependencies": {
-    "jsonschema": "1.2.6",
+    "jsonschema": "1.4.0",
     "uuid": "8.3.2"
   }
 }
