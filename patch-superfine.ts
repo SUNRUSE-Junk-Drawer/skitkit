@@ -8,7 +8,7 @@ import { transformAsync } from "@babel/core";
   console.log(`Reading Superfine...`);
   const unpatchedModule = await promises.readFile(pathToModule, `utf8`);
 
-  if (unpatchedModule.includes(`export`)) {
+  if (/\bexport\b/.test(unpatchedModule)) {
     console.log(`Appears to be a module; patching...`);
     const patchedModule = await transformAsync(unpatchedModule, {
       plugins: ["@babel/plugin-transform-modules-commonjs"],
