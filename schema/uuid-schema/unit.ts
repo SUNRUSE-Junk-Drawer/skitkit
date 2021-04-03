@@ -178,7 +178,7 @@ export function validateUuidMapSchema<TValue extends Json>(
         }),
         schema,
         overriddenErrors || [
-          `${path} additionalProperty "${value}" exists in instance when not allowed`,
+          `${path} is not allowed to have the additional property "${value}"`,
         ]
       );
     });
