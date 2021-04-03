@@ -13,11 +13,10 @@ describe(`skitListRouteView`, () => {
       expect(dom).toEqual(
         superfine.h(`body`, {}, [
           superfine.h(`header`, {}, [
-            superfine.h(
-              `h1`,
-              {},
-              superfine.h(`a`, { href: `#` }, superfine.text(`SkitKit`))
-            ),
+            superfine.h(`h1`, {}, [
+              superfine.h(`a`, { href: `#` }, superfine.text(`SkitKit`)),
+              superfine.h(`sub`, {}, superfine.text(`v999.999.999`)),
+            ]),
             superfine.h(
               `nav`,
               {},
@@ -57,11 +56,10 @@ describe(`skitListRouteView`, () => {
       expect(dom).toEqual(
         superfine.h(`body`, {}, [
           superfine.h(`header`, {}, [
-            superfine.h(
-              `h1`,
-              {},
-              superfine.h(`a`, { href: `#` }, superfine.text(`SkitKit`))
-            ),
+            superfine.h(`h1`, {}, [
+              superfine.h(`a`, { href: `#` }, superfine.text(`SkitKit`)),
+              superfine.h(`sub`, {}, superfine.text(`v999.999.999`)),
+            ]),
             superfine.h(
               `nav`,
               {},
@@ -111,11 +109,10 @@ describe(`skitListRouteView`, () => {
       expect(dom).toEqual(
         superfine.h(`body`, {}, [
           superfine.h(`header`, {}, [
-            superfine.h(
-              `h1`,
-              {},
-              superfine.h(`a`, { href: `#` }, superfine.text(`SkitKit`))
-            ),
+            superfine.h(`h1`, {}, [
+              superfine.h(`a`, { href: `#` }, superfine.text(`SkitKit`)),
+              superfine.h(`sub`, {}, superfine.text(`v999.999.999`)),
+            ]),
             superfine.h(
               `nav`,
               {},
@@ -178,11 +175,10 @@ describe(`skitListRouteView`, () => {
       expect(dom).toEqual(
         superfine.h(`body`, {}, [
           superfine.h(`header`, {}, [
-            superfine.h(
-              `h1`,
-              {},
-              superfine.h(`a`, { href: `#` }, superfine.text(`SkitKit`))
-            ),
+            superfine.h(`h1`, {}, [
+              superfine.h(`a`, { href: `#` }, superfine.text(`SkitKit`)),
+              superfine.h(`sub`, {}, superfine.text(`v999.999.999`)),
+            ]),
             superfine.h(
               `nav`,
               {},

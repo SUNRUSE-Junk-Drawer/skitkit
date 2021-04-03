@@ -10,7 +10,7 @@
     "inlineSources": false,
     "jsx": "preserve",
     "listFiles": false,
-    "module": "none",
+    "module": "CommonJS",
     "newLine": "LF",
     "noEmit": false,
     "noEmitHelpers": false,
@@ -60,7 +60,7 @@
     "allowUmdGlobalAccess": false,
     "keyofStringsOnly": true,
     "declarationMap": false,
-    "resolveJsonModule": false,
+    "resolveJsonModule": true,
     "lib": [
       "ES2018",
       "DOM"

@@ -1,4 +1,5 @@
 import * as superfine from "superfine";
+import { version } from "../../../../../package.json";
 import { UuidSchema } from "../../../../../schema/uuid-schema";
 import { NameSchema } from "../../../../../schema/name-schema";
 
@@ -40,11 +41,10 @@ export function skitListRouteView(
 
   return superfine.h(`body`, {}, [
     superfine.h(`header`, {}, [
-      superfine.h(
-        `h1`,
-        {},
-        superfine.h(`a`, { href: `#` }, superfine.text(`SkitKit`))
-      ),
+      superfine.h(`h1`, {}, [
+        superfine.h(`a`, { href: `#` }, superfine.text(`SkitKit`)),
+        superfine.h(`sub`, {}, superfine.text(`v${version}`)),
+      ]),
       superfine.h(
         `nav`,
         {},
