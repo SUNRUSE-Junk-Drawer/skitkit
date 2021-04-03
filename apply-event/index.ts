@@ -469,7 +469,7 @@ export function applyEvent(
         };
       }
 
-    case `createStartingLine`:
+    case `createStartingLine`: {
       if (!exists(`scenes`, event.sceneUuid)) {
         return {
           successful: false,
@@ -566,8 +566,9 @@ export function applyEvent(
           },
         },
       };
+    }
 
-    case `updateLineCharacterEmote`:
+    case `updateLineCharacterEmote`: {
       if (!exists(`lines`, event.lineUuid)) {
         return {
           successful: false,
@@ -613,6 +614,7 @@ export function applyEvent(
           },
         },
       };
+    }
 
     case `updateLineText`:
       if (!exists(`lines`, event.lineUuid)) {
