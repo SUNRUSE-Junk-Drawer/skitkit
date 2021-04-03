@@ -37,7 +37,7 @@ export default {
         display: `standalone`,
         orientation: `any`,
         scope: `/`,
-        start_url: `/#games`,
+        start_url: `/#skits`,
         version: JSON.parse(
           fs.readFileSync(path.join(__dirname, `..`, `package.json`), `utf8`)
         ).version,
