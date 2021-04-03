@@ -11,7 +11,7 @@
   },
   "license": "MIT",
   "devDependencies": {
-    "@types/jasmine": "3.5.11",
+    "@types/jasmine": "3.6.9",
     "@types/mini-css-extract-plugin": "0.9.1",
     "@types/node": "13.13.48",
     "@types/rewire": "2.5.28",
