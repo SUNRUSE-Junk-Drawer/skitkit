@@ -13,7 +13,7 @@
   "devDependencies": {
     "@types/jasmine": "3.5.11",
     "@types/mini-css-extract-plugin": "0.9.1",
-    "@types/node": "13.13.14",
+    "@types/node": "13.13.48",
     "@types/rewire": "2.5.28",
     "@types/superfine": "7.0.1",
     "@types/uuid": "^8.0.0",
