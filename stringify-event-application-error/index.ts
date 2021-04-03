@@ -16,7 +16,7 @@ export function stringifyEventApplicationError(
     case `noEntitiesExist`:
       return `No entities of type ${error.entityType} exist`;
 
-    case `noRelationshipBetweenEntities`:
+    case `noRelationshipBetweenEntities`: {
       const stringifiedEntities = error.entities.map(
         (entity) => `${entity.entityType} ${entity.uuid}`
       );
@@ -30,6 +30,7 @@ export function stringifyEventApplicationError(
       return `No relationship exists between entities ${stringifiedEntitiesExceptLast.join(
         `, `
       )} and ${lastStringifiedEntity}`;
+    }
 
     case `entityIsLastChild`:
       return `Entity ${error.childEntityType} ${error.childUuid} is the last child of ${error.parentEntityType} ${error.parentUuid}`;

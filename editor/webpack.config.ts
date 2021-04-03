@@ -32,13 +32,11 @@ export default {
         developerURL: `https://www.sunruse.co.uk`,
         lang: `en-US`,
         background: `#422`,
-        // eslint-disable-next-line @typescript-eslint/camelcase
         theme_color: `#422`,
         appleStatusBarStyle: `black`,
         display: `standalone`,
         orientation: `any`,
         scope: `/`,
-        // eslint-disable-next-line @typescript-eslint/camelcase
         start_url: `/#games`,
         version: JSON.parse(
           fs.readFileSync(path.join(__dirname, `..`, `package.json`), `utf8`)
