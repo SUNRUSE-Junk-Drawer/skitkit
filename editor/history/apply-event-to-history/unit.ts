@@ -1,9 +1,9 @@
-import { History } from "..";
+import { HistorySchema } from "../history-schema";
 import { applyEventToHistory } from ".";
 
 describe(`applyEventToHistory`, () => {
   describe(`when no events have been done`, () => {
-    let result: History;
+    let result: HistorySchema;
 
     beforeAll(() => {
       result = applyEventToHistory(
@@ -73,7 +73,7 @@ describe(`applyEventToHistory`, () => {
   });
 
   describe(`when one event has been done`, () => {
-    let result: History;
+    let result: HistorySchema;
 
     beforeAll(() => {
       result = applyEventToHistory(
@@ -152,7 +152,7 @@ describe(`applyEventToHistory`, () => {
   });
 
   describe(`when four events have been done`, () => {
-    let result: History;
+    let result: HistorySchema;
 
     beforeAll(() => {
       result = applyEventToHistory(
@@ -256,7 +256,7 @@ describe(`applyEventToHistory`, () => {
 
   describe(`when five events have been done`, () => {
     describe(`when applying the first done step succeeds`, () => {
-      let result: History;
+      let result: HistorySchema;
 
       beforeAll(() => {
         result = applyEventToHistory(

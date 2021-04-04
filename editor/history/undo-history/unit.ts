@@ -1,9 +1,9 @@
-import { History } from "..";
+import { HistorySchema } from "../history-schema";
 import { undoHistory } from ".";
 
 describe(`undoHistory`, () => {
   describe(`when one step is done`, () => {
-    let history: History;
+    let history: HistorySchema;
 
     beforeEach(() => {
       history = undoHistory({
@@ -68,7 +68,7 @@ describe(`undoHistory`, () => {
   });
 
   describe(`when two steps are done`, () => {
-    let history: History;
+    let history: HistorySchema;
 
     beforeEach(() => {
       history = undoHistory({
@@ -142,7 +142,7 @@ describe(`undoHistory`, () => {
   });
 
   describe(`when three steps are done`, () => {
-    let history: History;
+    let history: HistorySchema;
 
     beforeEach(() => {
       history = undoHistory({

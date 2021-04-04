@@ -1,12 +1,12 @@
 import { EventSchema } from "../../../schema/event-schema";
-import { History } from "..";
+import { HistorySchema } from "../history-schema";
 import { applyEvent } from "../../../apply-event";
 import { stringifyEventApplicationError } from "../../../stringify-event-application-error";
 
 export function applyEventToHistory(
   event: EventSchema,
-  history: History
-): History {
+  history: HistorySchema
+): HistorySchema {
   let beforeSteps = history.beforeSteps;
   let doneSteps = history.doneSteps;
 

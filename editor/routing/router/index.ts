@@ -1,4 +1,4 @@
-import { History } from "../../history";
+import { HistorySchema } from "../../history/history-schema";
 import { Route } from "../route";
 import { LocalStorageHelperInterface } from "../../local-storage-helper";
 import {
@@ -8,7 +8,7 @@ import {
 import { getCurrentFromHistory } from "../../history/get-current-from-history";
 
 export function router(
-  histories: LocalStorageHelperInterface<History>
+  histories: LocalStorageHelperInterface<HistorySchema>
 ): Route<SkitListRouteParameters> {
   return {
     parameters: {

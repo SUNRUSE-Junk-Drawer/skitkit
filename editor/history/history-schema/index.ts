@@ -1,8 +1,8 @@
 import * as ajv from "ajv";
-import { stateSchema, StateSchema } from "../../schema/state-schema";
-import { eventSchema, EventSchema } from "../../schema/event-schema";
+import { stateSchema, StateSchema } from "../../../schema/state-schema";
+import { eventSchema, EventSchema } from "../../../schema/event-schema";
 
-export const historySchema: ajv.JSONSchemaType<History> = {
+export const historySchema: ajv.JSONSchemaType<HistorySchema> = {
   $schema: `http://json-schema.org/draft-07/schema#`,
   type: `object`,
   additionalProperties: false,
@@ -20,7 +20,7 @@ export const historySchema: ajv.JSONSchemaType<History> = {
   },
 };
 
-export type History = {
+export type HistorySchema = {
   readonly beforeSteps: StateSchema;
   readonly doneSteps: ReadonlyArray<EventSchema>;
   readonly undoneSteps: ReadonlyArray<EventSchema>;

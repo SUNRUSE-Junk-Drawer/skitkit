@@ -4,11 +4,11 @@ import {
   rejectsMissingProperty,
   rejectsNonArrays,
   rejectsNonObjects,
-} from "../../schema/unit";
-import { Json } from "../..";
-import { validateStateSchema } from "../../schema/state-schema/unit";
+} from "../../../schema/unit";
+import { Json } from "../../..";
+import { validateStateSchema } from "../../../schema/state-schema/unit";
 import { historySchema } from ".";
-import { validateEventSchema } from "../../schema/event-schema/unit";
+import { validateEventSchema } from "../../../schema/event-schema/unit";
 
 export function validateHistorySchema(
   description: string,

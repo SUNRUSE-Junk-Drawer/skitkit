@@ -1,5 +1,5 @@
 import { histories } from ".";
-import { historySchema } from "../history";
+import { historySchema } from "../history/history-schema";
 
 describe(`histories`, () => {
   it(`uses the expected name`, () => {

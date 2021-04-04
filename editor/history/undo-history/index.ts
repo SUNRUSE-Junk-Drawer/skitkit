@@ -1,6 +1,6 @@
-import { History } from "..";
+import { HistorySchema } from "../history-schema";
 
-export function undoHistory(history: History): History {
+export function undoHistory(history: HistorySchema): HistorySchema {
   return {
     beforeSteps: history.beforeSteps,
     doneSteps: history.doneSteps.slice(0, history.doneSteps.length - 1),
