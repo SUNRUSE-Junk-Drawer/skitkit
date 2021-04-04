@@ -31,6 +31,7 @@
     "html-webpack-plugin": "5.3.1",
     "jasmine": "3.7.0",
     "mini-css-extract-plugin": "1.4.0",
+    "node-static": "^0.7.11",
     "npm-run-all": "4.1.5",
     "nyc": "15.1.0",
     "prettier": "2.2.1",
@@ -54,7 +55,12 @@
     "buildNyc": "nyc --check-coverage --all --exclude \"patch-superfine.*\" --exclude \"**/*.ts\" --exclude \"**/*.d.ts\" --exclude \"**/unit.*\" --exclude \"editor/index.js\" --exclude \"editor/webpack.config.js\" --lines 100 --functions 100 --branches 100 --statements 100 npm run-script buildJasmineUnit",
     "test": "npm-run-all buildPatchSuperfine buildClean buildTypeScript buildNyc",
     "lint": "eslint \"**/*.ts\"",
-    "webpack": "webpack --mode=production --config ./editor/webpack.config.js"
+    "webpack": "webpack --mode=production --config ./editor/webpack.config.js",
+    "webpackWatch": "npm-run-all buildPatchSuperfine buildClean buildTypeScript webpackWatchPostClean",
+    "webpackWatchPostClean": "npm-run-all --parallel webpackWatchPostCleanTypeScript webpackWatchPostCleanWebpack webpackWatchPostCleanNodeStatic",
+    "webpackWatchPostCleanTypeScript": "tsc --watch",
+    "webpackWatchPostCleanWebpack": "webpack --watch --mode=development --config ./editor/webpack.config.js",
+    "webpackWatchPostCleanNodeStatic": "static ./editor/dist"
   },
   "files": [
     "**/*.js",
