@@ -1,4 +1,5 @@
 import rewire = require("rewire");
+import { refresh } from "./refresh";
 
 describe(`eventHandlers`, () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -6,6 +7,7 @@ describe(`eventHandlers`, () => {
 
   describe(`when navigator.serviceWorker is not defined`, () => {
     let addEventListener: jasmine.Spy;
+    let eventHandlers: { __get__(name: string): unknown };
 
     beforeAll(() => {
       addEventListener = jasmine.createSpy(`addEventListener`);
@@ -17,21 +19,66 @@ describe(`eventHandlers`, () => {
         patchableGlobal.navigator = {};
         patchableGlobal.addEventListener = addEventListener;
 
-        rewire(`.`);
+        eventHandlers = rewire(`.`);
       } finally {
         patchableGlobal.navigator = existingNavigator;
         patchableGlobal.addEventListener = existingAddEventListener;
       }
     });
 
-    it(`does not call addEventListener`, () => {
-      expect(addEventListener).not.toHaveBeenCalled();
+    it(`calls addEventListener once`, () => {
+      expect(addEventListener).toHaveBeenCalledTimes(1);
+    });
+
+    it(`calls addEventListener with a type of "load"`, () => {
+      expect(addEventListener).toHaveBeenCalledWith(
+        `load`,
+        jasmine.any(Function)
+      );
+    });
+
+    it(`imports refresh`, () => {
+      expect(eventHandlers.__get__(`importedRefresh`)).toBe(refresh);
+    });
+  });
+
+  describe(`when navigator.serviceWorker is not defined and the document loads`, () => {
+    let addEventListener: jasmine.Spy;
+    let importedRefresh: jasmine.Spy;
+
+    beforeAll(() => {
+      addEventListener = jasmine.createSpy(`addEventListener`);
+      importedRefresh = jasmine.createSpy(`importedRefresh`);
+
+      const existingAddEventListener = patchableGlobal.addEventListener;
+      const existingNavigator = patchableGlobal.navigator;
+
+      try {
+        patchableGlobal.navigator = {};
+        patchableGlobal.addEventListener = addEventListener;
+
+        rewire(`.`).__set__(`importedRefresh`, importedRefresh);
+
+        addEventListener.calls.argsFor(0)[1]();
+      } finally {
+        patchableGlobal.addEventListener = existingAddEventListener;
+        patchableGlobal.navigator = existingNavigator;
+      }
+    });
+
+    it(`does not call addEventListener again`, () => {
+      expect(addEventListener).toHaveBeenCalledTimes(1);
+    });
+
+    it(`calls refresh once`, () => {
+      expect(importedRefresh).toHaveBeenCalledTimes(1);
     });
   });
 
   describe(`when navigator.serviceWorker is defined`, () => {
     let addEventListener: jasmine.Spy;
     let register: jasmine.Spy;
+    let eventHandlers: { __get__(name: string): unknown };
 
     beforeAll(() => {
       addEventListener = jasmine.createSpy(`addEventListener`);
@@ -42,9 +89,11 @@ describe(`eventHandlers`, () => {
 
       try {
         patchableGlobal.addEventListener = addEventListener;
-        patchableGlobal.navigator = { serviceWorker: { register } };
+        patchableGlobal.navigator = {
+          serviceWorker: { register },
+        };
 
-        rewire(`.`);
+        eventHandlers = rewire(`.`);
       } finally {
         patchableGlobal.addEventListener = existingAddEventListener;
         patchableGlobal.navigator = existingNavigator;
@@ -65,15 +114,21 @@ describe(`eventHandlers`, () => {
     it(`does not call navigator.serviceWorker.register`, () => {
       expect(register).not.toHaveBeenCalled();
     });
+
+    it(`imports refresh`, () => {
+      expect(eventHandlers.__get__(`importedRefresh`)).toBe(refresh);
+    });
   });
 
   describe(`when navigator.serviceWorker is defined and the document loads`, () => {
     let addEventListener: jasmine.Spy;
     let register: jasmine.Spy;
+    let importedRefresh: jasmine.Spy;
 
     beforeAll(() => {
       addEventListener = jasmine.createSpy(`addEventListener`);
       register = jasmine.createSpy(`register`);
+      importedRefresh = jasmine.createSpy(`importedRefresh`);
 
       const existingAddEventListener = patchableGlobal.addEventListener;
       const existingNavigator = patchableGlobal.navigator;
@@ -82,7 +137,7 @@ describe(`eventHandlers`, () => {
         patchableGlobal.addEventListener = addEventListener;
         patchableGlobal.navigator = { serviceWorker: { register } };
 
-        rewire(`.`);
+        rewire(`.`).__set__(`importedRefresh`, importedRefresh);
 
         addEventListener.calls.argsFor(0)[1]();
       } finally {
@@ -101,6 +156,10 @@ describe(`eventHandlers`, () => {
 
     it(`calls navigator.serviceWorker.register with the path to the service worker`, () => {
       expect(register).toHaveBeenCalledWith(`service-worker.js`);
+    });
+
+    it(`calls refresh once`, () => {
+      expect(importedRefresh).toHaveBeenCalledTimes(1);
     });
   });
 });
