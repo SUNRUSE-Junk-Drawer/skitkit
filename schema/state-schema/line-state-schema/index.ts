@@ -1,4 +1,4 @@
-import * as jsonschema from "jsonschema";
+import * as ajv from "ajv";
 import { UuidSchema, uuidSchema } from "../../uuid-schema";
 import {
   LineCharacterStateSchema,
@@ -6,8 +6,8 @@ import {
 } from "./line-character-state-schema";
 import { TextSchema, textSchema } from "../../text-schema";
 
-export const lineStateSchema: jsonschema.Schema = {
-  $schema: `http://json-schema.org/draft-04/schema#`,
+export const lineStateSchema: ajv.JSONSchemaType<LineStateSchema> = {
+  $schema: `http://json-schema.org/draft-07/schema#`,
   type: `object`,
   additionalProperties: false,
   required: [`sceneUuid`, `text`, `characters`],
@@ -20,6 +20,7 @@ export const lineStateSchema: jsonschema.Schema = {
       patternProperties: {
         "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$": lineCharacterStateSchema,
       },
+      required: [],
     },
   },
 };

@@ -1,4 +1,4 @@
-import * as jsonschema from "jsonschema";
+import * as ajv from "ajv";
 import { accepts, rejectsNonObjects, rejectsMissingProperty } from "../unit";
 import { Json, stateSchema } from "../..";
 import { validateNameSchema } from "../name-schema/unit";
@@ -11,9 +11,9 @@ import { validateLineStateSchema } from "./line-state-schema/unit";
 
 export function validateStateSchema(
   description: string,
-  schema: jsonschema.Schema,
+  schema: ajv.JSONSchemaType<Json>,
   path: string,
-  overriddenErrors: null | ReadonlyArray<string>,
+  unpredictableErrors: boolean,
   instanceFactory: (sceneState: Json) => Json
 ): void {
   describe(description, () => {
@@ -171,7 +171,7 @@ export function validateStateSchema(
       `non-object`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       (nonObject) => instanceFactory(nonObject)
     );
 
@@ -179,7 +179,7 @@ export function validateStateSchema(
       `name`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         backgrounds,
         characters,
@@ -192,8 +192,8 @@ export function validateStateSchema(
     validateNameSchema(
       `name`,
       schema,
-      `${path}.name`,
-      overriddenErrors,
+      `${path}/name`,
+      unpredictableErrors,
       (name) =>
         instanceFactory({
           name,
@@ -209,7 +209,7 @@ export function validateStateSchema(
       `backgrounds`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         name: `Test Name`,
         characters,
@@ -222,8 +222,8 @@ export function validateStateSchema(
     validateUuidMapSchema(
       `backgrounds`,
       schema,
-      `${path}.backgrounds`,
-      overriddenErrors,
+      `${path}/backgrounds`,
+      unpredictableErrors,
       (injectedBackgrounds) =>
         instanceFactory({
           name: `Test Name`,
@@ -250,8 +250,8 @@ export function validateStateSchema(
     validateBackgroundStateSchema(
       `backgrounds`,
       schema,
-      `${path}.backgrounds["77577025-547c-4de5-b60e-b5bb2fc7fe77"]`,
-      overriddenErrors,
+      `${path}/backgrounds/77577025-547c-4de5-b60e-b5bb2fc7fe77`,
+      unpredictableErrors,
       (background) =>
         instanceFactory({
           name: `Test Name`,
@@ -270,7 +270,7 @@ export function validateStateSchema(
       `characters`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         name: `Test Name`,
         backgrounds,
@@ -283,8 +283,8 @@ export function validateStateSchema(
     validateUuidMapSchema(
       `characters`,
       schema,
-      `${path}.characters`,
-      overriddenErrors,
+      `${path}/characters`,
+      unpredictableErrors,
       (injectedCharacters) =>
         instanceFactory({
           name: `Test Name`,
@@ -320,8 +320,8 @@ export function validateStateSchema(
     validateCharacterStateSchema(
       `characters`,
       schema,
-      `${path}.characters["77577025-547c-4de5-b60e-b5bb2fc7fe77"]`,
-      overriddenErrors,
+      `${path}/characters/77577025-547c-4de5-b60e-b5bb2fc7fe77`,
+      unpredictableErrors,
       (character) =>
         instanceFactory({
           name: `Test Name`,
@@ -340,7 +340,7 @@ export function validateStateSchema(
       `emotes`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         name: `Test Name`,
         backgrounds,
@@ -353,8 +353,8 @@ export function validateStateSchema(
     validateUuidMapSchema(
       `emotes`,
       schema,
-      `${path}.emotes`,
-      overriddenErrors,
+      `${path}/emotes`,
+      unpredictableErrors,
       (injectedEmotes) =>
         instanceFactory({
           name: `Test Name`,
@@ -384,8 +384,8 @@ export function validateStateSchema(
     validateEmoteStateSchema(
       `emotes`,
       schema,
-      `${path}.emotes["77577025-547c-4de5-b60e-b5bb2fc7fe77"]`,
-      overriddenErrors,
+      `${path}/emotes/77577025-547c-4de5-b60e-b5bb2fc7fe77`,
+      unpredictableErrors,
       (emote) =>
         instanceFactory({
           name: `Test Name`,
@@ -404,7 +404,7 @@ export function validateStateSchema(
       `scenes`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         name: `Test Name`,
         backgrounds,
@@ -417,8 +417,8 @@ export function validateStateSchema(
     validateUuidMapSchema(
       `scenes`,
       schema,
-      `${path}.scenes`,
-      overriddenErrors,
+      `${path}/scenes`,
+      unpredictableErrors,
       (injectedScenes) =>
         instanceFactory({
           name: `Test Name`,
@@ -460,8 +460,8 @@ export function validateStateSchema(
     validateSceneStateSchema(
       `scenes`,
       schema,
-      `${path}.scenes["77577025-547c-4de5-b60e-b5bb2fc7fe77"]`,
-      overriddenErrors,
+      `${path}/scenes/77577025-547c-4de5-b60e-b5bb2fc7fe77`,
+      unpredictableErrors,
       (scene) =>
         instanceFactory({
           name: `Test Name`,
@@ -480,7 +480,7 @@ export function validateStateSchema(
       `lines`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         name: `Test Name`,
         backgrounds,
@@ -493,8 +493,8 @@ export function validateStateSchema(
     validateUuidMapSchema(
       `lines`,
       schema,
-      `${path}.lines`,
-      overriddenErrors,
+      `${path}/lines`,
+      unpredictableErrors,
       (injectedLines) =>
         instanceFactory({
           name: `Test Name`,
@@ -554,8 +554,8 @@ export function validateStateSchema(
     validateLineStateSchema(
       `lines`,
       schema,
-      `${path}.lines["77577025-547c-4de5-b60e-b5bb2fc7fe77"]`,
-      overriddenErrors,
+      `${path}/lines/77577025-547c-4de5-b60e-b5bb2fc7fe77`,
+      unpredictableErrors,
       (line) =>
         instanceFactory({
           name: `Test Name`,
@@ -576,6 +576,6 @@ validateStateSchema(
   `stateSchema`,
   stateSchema,
   `instance`,
-  null,
+  false,
   (state) => state
 );

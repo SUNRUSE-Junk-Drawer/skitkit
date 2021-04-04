@@ -1,4 +1,4 @@
-import * as jsonschema from "jsonschema";
+import * as ajv from "ajv";
 import { accepts, rejects, rejectsNonObjects } from "../unit";
 import { Json, uuidSchema } from "../..";
 
@@ -30,9 +30,9 @@ export function forEachInvalidUuid(
 
 export function validateUuidSchema(
   description: string,
-  schema: jsonschema.Schema,
+  schema: ajv.JSONSchemaType<Json>,
   path: string,
-  overriddenErrors: null | ReadonlyArray<string>,
+  unpredictableErrors: boolean,
   instanceFactory: (uuid: Json) => Json
 ): void {
   describe(description, () => {
@@ -47,9 +47,11 @@ export function validateUuidSchema(
         description,
         instanceFactory(value),
         schema,
-        overriddenErrors || [
-          `${path} does not match pattern "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"`,
-        ]
+        unpredictableErrors
+          ? null
+          : [
+              `${path} must match pattern "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"`,
+            ]
       );
     });
 
@@ -57,74 +59,74 @@ export function validateUuidSchema(
       `null`,
       instanceFactory(null),
       schema,
-      overriddenErrors || [`${path} is not of a type(s) string`]
+      unpredictableErrors ? null : [`${path} must be string`]
     );
 
     rejects(
       `zero`,
       instanceFactory(0),
       schema,
-      overriddenErrors || [`${path} is not of a type(s) string`]
+      unpredictableErrors ? null : [`${path} must be string`]
     );
 
     rejects(
       `negative zero`,
       instanceFactory(-0),
       schema,
-      overriddenErrors || [`${path} is not of a type(s) string`]
+      unpredictableErrors ? null : [`${path} must be string`]
     );
 
     rejects(
       `positive integers`,
       instanceFactory(326),
       schema,
-      overriddenErrors || [`${path} is not of a type(s) string`]
+      unpredictableErrors ? null : [`${path} must be string`]
     );
 
     rejects(
       `negative integers`,
       instanceFactory(-326),
       schema,
-      overriddenErrors || [`${path} is not of a type(s) string`]
+      unpredictableErrors ? null : [`${path} must be string`]
     );
 
     rejects(
       `positive decimals`,
       instanceFactory(32.6),
       schema,
-      overriddenErrors || [`${path} is not of a type(s) string`]
+      unpredictableErrors ? null : [`${path} must be string`]
     );
 
     rejects(
       `negative decimals`,
       instanceFactory(-32.6),
       schema,
-      overriddenErrors || [`${path} is not of a type(s) string`]
+      unpredictableErrors ? null : [`${path} must be string`]
     );
 
     rejects(
       `empty arrays`,
       instanceFactory([]),
       schema,
-      overriddenErrors || [`${path} is not of a type(s) string`]
+      unpredictableErrors ? null : [`${path} must be string`]
     );
 
     rejects(
       `empty objects`,
       instanceFactory({}),
       schema,
-      overriddenErrors || [`${path} is not of a type(s) string`]
+      unpredictableErrors ? null : [`${path} must be string`]
     );
   });
 }
 
-validateUuidSchema(`uuidSchema`, uuidSchema, `instance`, null, (uuid) => uuid);
+validateUuidSchema(`uuidSchema`, uuidSchema, `instance`, false, (uuid) => uuid);
 
 export function validateUuidMapSchema<TValue extends Json>(
   description: string,
-  schema: jsonschema.Schema,
+  schema: ajv.JSONSchemaType<Json>,
   path: string,
-  overriddenErrors: null | ReadonlyArray<string>,
+  unpredictableErrors: boolean,
   instanceFactory: (name: Json) => Json,
   validValueA: TValue,
   validValueB: TValue,
@@ -164,7 +166,7 @@ export function validateUuidMapSchema<TValue extends Json>(
       `non-object`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory
     );
 
@@ -177,9 +179,9 @@ export function validateUuidMapSchema<TValue extends Json>(
           "6afb0c21-c2e2-414e-a40d-c2fd116f82c7": validValueC,
         }),
         schema,
-        overriddenErrors || [
-          `${path} is not allowed to have the additional property "${value}"`,
-        ]
+        unpredictableErrors
+          ? null
+          : [`${path} must NOT have additional properties`]
       );
     });
   });

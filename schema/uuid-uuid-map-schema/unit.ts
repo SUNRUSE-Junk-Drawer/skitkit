@@ -1,12 +1,12 @@
-import * as jsonschema from "jsonschema";
+import * as ajv from "ajv";
 import { validateUuidSchema, validateUuidMapSchema } from "../uuid-schema/unit";
 import { Json, uuidUuidMapSchema } from "../..";
 
 export function validateUuidUuidMapSchema(
   description: string,
-  schema: jsonschema.Schema,
+  schema: ajv.JSONSchemaType<Json>,
   path: string,
-  overriddenErrors: null | ReadonlyArray<string>,
+  unpredictableErrors: boolean,
   instanceFactory: (uuidUuidMap: Json) => Json
 ): void {
   describe(description, () => {
@@ -14,7 +14,7 @@ export function validateUuidUuidMapSchema(
       `uuid map`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory,
       `0eedaaf6-3273-41df-ac10-0b39aa20ca32`,
       `d982f79e-c16e-4224-85d9-b93946257052`,
@@ -24,8 +24,8 @@ export function validateUuidUuidMapSchema(
     validateUuidSchema(
       `value`,
       schema,
-      `${path}.b3c27180-f8f9-4bbf-94a3-b50df6056114`,
-      overriddenErrors,
+      `${path}/b3c27180-f8f9-4bbf-94a3-b50df6056114`,
+      unpredictableErrors,
       (uuid) =>
         instanceFactory({
           "930c204f-28b8-4e19-9b57-4d381fc82107": `0eedaaf6-3273-41df-ac10-0b39aa20ca32`,
@@ -40,6 +40,6 @@ validateUuidUuidMapSchema(
   `uuidUuidMapSchema`,
   uuidUuidMapSchema,
   `instance`,
-  null,
+  false,
   (uuidUuidMap) => uuidUuidMap
 );

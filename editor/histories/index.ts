@@ -1,9 +1,8 @@
 import { LocalStorageHelper } from "../local-storage-helper";
-import { History } from "../history";
-import { stateSchema } from "../../schema/state-schema";
+import { History, historySchema } from "../history";
 
 export const histories = new LocalStorageHelper<History>(
   `histories`,
   `skitKitHistory`,
-  stateSchema
+  historySchema
 );

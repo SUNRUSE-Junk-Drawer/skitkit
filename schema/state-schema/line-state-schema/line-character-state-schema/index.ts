@@ -1,8 +1,8 @@
-import * as jsonschema from "jsonschema";
+import * as ajv from "ajv";
 import { UuidSchema, uuidSchema } from "../../../uuid-schema";
 
-export const lineCharacterStateSchema: jsonschema.Schema = {
-  $schema: `http://json-schema.org/draft-04/schema#`,
+export const lineCharacterStateSchema: ajv.JSONSchemaType<LineCharacterStateSchema> = {
+  $schema: `http://json-schema.org/draft-07/schema#`,
   type: `object`,
   additionalProperties: false,
   required: [`emoteUuid`],

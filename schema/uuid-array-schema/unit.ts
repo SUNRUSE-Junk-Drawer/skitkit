@@ -1,13 +1,13 @@
-import * as jsonschema from "jsonschema";
+import * as ajv from "ajv";
 import { accepts, rejects, rejectsNonArrays } from "../unit";
 import { validateUuidSchema } from "../uuid-schema/unit";
 import { Json, uuidArraySchema } from "../..";
 
 export function validateUuidArraySchema(
   description: string,
-  schema: jsonschema.Schema,
+  schema: ajv.JSONSchemaType<Json>,
   path: string,
-  overriddenErrors: null | ReadonlyArray<string>,
+  unpredictableErrors: boolean,
   instanceFactory: (uuidUuidMap: Json) => Json
 ): void {
   describe(description, () => {
@@ -15,7 +15,7 @@ export function validateUuidArraySchema(
       `empty`,
       instanceFactory([]),
       schema,
-      overriddenErrors || [`${path} does not meet minimum length of 1`]
+      unpredictableErrors ? null : [`${path} must NOT have fewer than 1 items`]
     );
 
     accepts(
@@ -51,22 +51,26 @@ export function validateUuidArraySchema(
         `0eedaaf6-3273-41df-ac10-0b39aa20ca32`,
       ]),
       schema,
-      overriddenErrors || [`${path} contains duplicate item`]
+      unpredictableErrors
+        ? null
+        : [
+            `${path} must NOT have duplicate items (items ## 2 and 0 are identical)`,
+          ]
     );
 
     rejectsNonArrays(
       `non-array`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory
     );
 
     validateUuidSchema(
       `value`,
       schema,
-      `${path}[1]`,
-      overriddenErrors,
+      `${path}/1`,
+      unpredictableErrors,
       (uuid) =>
         instanceFactory([
           `0eedaaf6-3273-41df-ac10-0b39aa20ca32`,
@@ -81,6 +85,6 @@ validateUuidArraySchema(
   `uuidArraySchema`,
   uuidArraySchema,
   `instance`,
-  null,
+  false,
   (uuidArray) => uuidArray
 );

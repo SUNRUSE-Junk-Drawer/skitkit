@@ -1,7 +1,7 @@
-import * as jsonschema from "jsonschema";
+import * as ajv from "ajv";
 
-export const uuidSchema: jsonschema.Schema = {
-  $schema: `http://json-schema.org/draft-04/schema#`,
+export const uuidSchema: ajv.JSONSchemaType<UuidSchema> = {
+  $schema: `http://json-schema.org/draft-07/schema#`,
   type: `string`,
   pattern: `^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$`,
 };

@@ -1,4 +1,4 @@
-import * as jsonschema from "jsonschema";
+import * as ajv from "ajv";
 import {
   accepts,
   rejectsMissingProperty,
@@ -10,9 +10,9 @@ import { Json, deleteSceneEventSchema } from "../../../..";
 
 export function validateDeleteSceneEventSchema(
   description: string,
-  schema: jsonschema.Schema,
+  schema: ajv.JSONSchemaType<Json>,
   path: string,
-  overriddenErrors: null | ReadonlyArray<string>,
+  unpredictableErrors: boolean,
   instanceFactory: (deleteSceneEvent: Json) => Json
 ): void {
   describe(description, () => {
@@ -29,7 +29,7 @@ export function validateDeleteSceneEventSchema(
       `type`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         sceneUuid: `a366e69c-d60e-4e27-bd18-7aea8257bcdb`,
       })
@@ -38,9 +38,9 @@ export function validateDeleteSceneEventSchema(
     rejectsOtherThanExpectedString(
       `type`,
       schema,
-      `${path}.type`,
+      `${path}/type`,
       `deleteScene`,
-      overriddenErrors,
+      unpredictableErrors,
       (type) =>
         instanceFactory({
           type,
@@ -52,7 +52,7 @@ export function validateDeleteSceneEventSchema(
       `sceneUuid`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         type: `deleteScene`,
       })
@@ -61,8 +61,8 @@ export function validateDeleteSceneEventSchema(
     validateUuidSchema(
       `sceneUuid`,
       schema,
-      `${path}.sceneUuid`,
-      overriddenErrors,
+      `${path}/sceneUuid`,
+      unpredictableErrors,
       (sceneUuid) =>
         instanceFactory({
           type: `deleteScene`,
@@ -76,7 +76,7 @@ rejectsNonObjects(
   `deleteSceneEventSchema`,
   deleteSceneEventSchema,
   `instance`,
-  null,
+  false,
   (nonObject) => nonObject
 );
 
@@ -84,6 +84,6 @@ validateDeleteSceneEventSchema(
   `deleteSceneEventSchema`,
   deleteSceneEventSchema,
   `instance`,
-  null,
+  false,
   (deleteSceneEvent) => deleteSceneEvent
 );

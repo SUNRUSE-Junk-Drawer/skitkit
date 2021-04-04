@@ -1,4 +1,4 @@
-import * as jsonschema from "jsonschema";
+import * as ajv from "ajv";
 import { accepts, rejectsMissingProperty, rejectsNonObjects } from "../../unit";
 import { validateNameSchema } from "../../name-schema/unit";
 import { Json, characterStateSchema } from "../../..";
@@ -6,9 +6,9 @@ import { validateUuidArraySchema } from "../../uuid-array-schema/unit";
 
 export function validateCharacterStateSchema(
   description: string,
-  schema: jsonschema.Schema,
+  schema: ajv.JSONSchemaType<Json>,
   path: string,
-  overriddenErrors: null | ReadonlyArray<string>,
+  unpredictableErrors: boolean,
   instanceFactory: (characterState: Json) => Json
 ): void {
   describe(description, () => {
@@ -29,7 +29,7 @@ export function validateCharacterStateSchema(
       `non-object`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       (nonObject) => instanceFactory(nonObject)
     );
 
@@ -37,7 +37,7 @@ export function validateCharacterStateSchema(
       `name`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         emoteUuids: [
           `faee5b62-7886-4957-9cfe-6bd98fdec071`,
@@ -50,8 +50,8 @@ export function validateCharacterStateSchema(
     validateNameSchema(
       `name`,
       schema,
-      `${path}.name`,
-      overriddenErrors,
+      `${path}/name`,
+      unpredictableErrors,
       (name) =>
         instanceFactory({
           name,
@@ -67,7 +67,7 @@ export function validateCharacterStateSchema(
       `emoteUuids`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         name: `Test Name`,
       })
@@ -76,8 +76,8 @@ export function validateCharacterStateSchema(
     validateUuidArraySchema(
       `emoteUuids`,
       schema,
-      `${path}.emoteUuids`,
-      overriddenErrors,
+      `${path}/emoteUuids`,
+      unpredictableErrors,
       (emoteUuids) =>
         instanceFactory({
           name: `Test Name`,
@@ -91,6 +91,6 @@ validateCharacterStateSchema(
   `characterStateSchema`,
   characterStateSchema,
   `instance`,
-  null,
+  false,
   (characterState) => characterState
 );

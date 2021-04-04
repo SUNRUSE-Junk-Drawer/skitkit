@@ -1,4 +1,4 @@
-import * as jsonschema from "jsonschema";
+import * as ajv from "ajv";
 import {
   accepts,
   rejectsMissingProperty,
@@ -10,9 +10,9 @@ import { Json, deleteBackgroundEventSchema } from "../../../..";
 
 export function validateDeleteBackgroundEventSchema(
   description: string,
-  schema: jsonschema.Schema,
+  schema: ajv.JSONSchemaType<Json>,
   path: string,
-  overriddenErrors: null | ReadonlyArray<string>,
+  unpredictableErrors: boolean,
   instanceFactory: (deleteBackgroundEvent: Json) => Json
 ): void {
   describe(description, () => {
@@ -29,7 +29,7 @@ export function validateDeleteBackgroundEventSchema(
       `type`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         backgroundUuid: `a366e69c-d60e-4e27-bd18-7aea8257bcdb`,
       })
@@ -38,9 +38,9 @@ export function validateDeleteBackgroundEventSchema(
     rejectsOtherThanExpectedString(
       `type`,
       schema,
-      `${path}.type`,
+      `${path}/type`,
       `deleteBackground`,
-      overriddenErrors,
+      unpredictableErrors,
       (type) =>
         instanceFactory({
           type,
@@ -52,7 +52,7 @@ export function validateDeleteBackgroundEventSchema(
       `backgroundUuid`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         type: `deleteBackground`,
       })
@@ -61,8 +61,8 @@ export function validateDeleteBackgroundEventSchema(
     validateUuidSchema(
       `backgroundUuid`,
       schema,
-      `${path}.backgroundUuid`,
-      overriddenErrors,
+      `${path}/backgroundUuid`,
+      unpredictableErrors,
       (backgroundUuid) =>
         instanceFactory({
           type: `deleteBackground`,
@@ -76,7 +76,7 @@ rejectsNonObjects(
   `deleteBackgroundEventSchema`,
   deleteBackgroundEventSchema,
   `instance`,
-  null,
+  false,
   (nonObject) => nonObject
 );
 
@@ -84,6 +84,6 @@ validateDeleteBackgroundEventSchema(
   `deleteBackgroundEventSchema`,
   deleteBackgroundEventSchema,
   `instance`,
-  null,
+  false,
   (deleteBackgroundEvent) => deleteBackgroundEvent
 );

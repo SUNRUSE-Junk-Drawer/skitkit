@@ -76,7 +76,7 @@ import {
 } from "./update-name-event-schema";
 
 export const eventSchema = {
-  $schema: `http://json-schema.org/draft-04/schema#`,
+  $schema: `http://json-schema.org/draft-07/schema#`,
   oneOf: [
     createBackgroundEventSchema,
     deleteBackgroundEventSchema,

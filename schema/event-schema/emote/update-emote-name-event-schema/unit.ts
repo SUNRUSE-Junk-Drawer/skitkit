@@ -1,4 +1,4 @@
-import * as jsonschema from "jsonschema";
+import * as ajv from "ajv";
 import {
   accepts,
   rejectsMissingProperty,
@@ -11,9 +11,9 @@ import { Json, updateEmoteNameEventSchema } from "../../../..";
 
 export function validateUpdateEmoteNameEventSchema(
   description: string,
-  schema: jsonschema.Schema,
+  schema: ajv.JSONSchemaType<Json>,
   path: string,
-  overriddenErrors: null | ReadonlyArray<string>,
+  unpredictableErrors: boolean,
   instanceFactory: (updateEmoteNameEvent: Json) => Json
 ): void {
   describe(description, () => {
@@ -31,7 +31,7 @@ export function validateUpdateEmoteNameEventSchema(
       `type`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         emoteUuid: `a366e69c-d60e-4e27-bd18-7aea8257bcdb`,
         name: `Test Name`,
@@ -41,9 +41,9 @@ export function validateUpdateEmoteNameEventSchema(
     rejectsOtherThanExpectedString(
       `type`,
       schema,
-      `${path}.type`,
+      `${path}/type`,
       `updateEmoteName`,
-      overriddenErrors,
+      unpredictableErrors,
       (type) =>
         instanceFactory({
           type,
@@ -56,7 +56,7 @@ export function validateUpdateEmoteNameEventSchema(
       `emoteUuid`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         type: `updateEmoteName`,
         name: `Test Name`,
@@ -66,8 +66,8 @@ export function validateUpdateEmoteNameEventSchema(
     validateUuidSchema(
       `emoteUuid`,
       schema,
-      `${path}.emoteUuid`,
-      overriddenErrors,
+      `${path}/emoteUuid`,
+      unpredictableErrors,
       (emoteUuid) =>
         instanceFactory({
           type: `updateEmoteName`,
@@ -80,7 +80,7 @@ export function validateUpdateEmoteNameEventSchema(
       `name`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         type: `updateEmoteName`,
         emoteUuid: `a366e69c-d60e-4e27-bd18-7aea8257bcdb`,
@@ -90,8 +90,8 @@ export function validateUpdateEmoteNameEventSchema(
     validateNameSchema(
       `name`,
       schema,
-      `${path}.name`,
-      overriddenErrors,
+      `${path}/name`,
+      unpredictableErrors,
       (name) =>
         instanceFactory({
           type: `updateEmoteName`,
@@ -106,7 +106,7 @@ rejectsNonObjects(
   `updateEmoteNameEventSchema`,
   updateEmoteNameEventSchema,
   `instance`,
-  null,
+  false,
   (nonObject) => nonObject
 );
 
@@ -114,6 +114,6 @@ validateUpdateEmoteNameEventSchema(
   `updateEmoteNameEventSchema`,
   updateEmoteNameEventSchema,
   `instance`,
-  null,
+  false,
   (updateEmoteNameEvent) => updateEmoteNameEvent
 );

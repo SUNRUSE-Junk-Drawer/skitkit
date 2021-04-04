@@ -1,12 +1,12 @@
-import * as jsonschema from "jsonschema";
+import * as ajv from "ajv";
 import { accepts, rejects } from "../unit";
 import { Json, svgSchema } from "../..";
 
 export function validateSvgSchema(
   description: string,
-  schema: jsonschema.Schema,
+  schema: ajv.JSONSchemaType<Json>,
   path: string,
-  overriddenErrors: null | ReadonlyArray<string>,
+  unpredictableErrors: boolean,
   instanceFactory: (svg: Json) => Json
 ): void {
   describe(description, () => {
@@ -22,79 +22,83 @@ export function validateSvgSchema(
       `beyond the length limit`,
       instanceFactory(`T`.repeat(1024 * 1024 + 1)),
       schema,
-      overriddenErrors || [`${path} does not meet maximum length of 1048576`]
+      unpredictableErrors
+        ? null
+        : [`${path} must NOT have more than 1048576 characters`]
     );
 
     rejects(
       `null`,
       instanceFactory(null),
       schema,
-      overriddenErrors || [`${path} is not of a type(s) string`]
+      unpredictableErrors ? null : [`${path} must be string`]
     );
 
     rejects(
       `empty strings`,
       instanceFactory(``),
       schema,
-      overriddenErrors || [`${path} does not meet minimum length of 1`]
+      unpredictableErrors
+        ? null
+        : [`${path} must NOT have fewer than 1 characters`]
     );
 
     rejects(
       `zero`,
       instanceFactory(0),
       schema,
-      overriddenErrors || [`${path} is not of a type(s) string`]
+      unpredictableErrors ? null : [`${path} must be string`]
     );
 
     rejects(
       `negative zero`,
       instanceFactory(-0),
       schema,
-      overriddenErrors || [`${path} is not of a type(s) string`]
+      unpredictableErrors ? null : [`${path} must be string`]
     );
 
     rejects(
       `positive integers`,
       instanceFactory(326),
       schema,
-      overriddenErrors || [`${path} is not of a type(s) string`]
+      unpredictableErrors ? null : [`${path} must be string`]
     );
 
     rejects(
       `negative integers`,
       instanceFactory(-326),
       schema,
-      overriddenErrors || [`${path} is not of a type(s) string`]
+      unpredictableErrors ? null : [`${path} must be string`]
     );
 
     rejects(
       `positive decimals`,
       instanceFactory(32.6),
       schema,
-      overriddenErrors || [`${path} is not of a type(s) string`]
+      unpredictableErrors ? null : [`${path} must be string`]
     );
 
     rejects(
       `negative decimals`,
       instanceFactory(-32.6),
       schema,
-      overriddenErrors || [`${path} is not of a type(s) string`]
+      unpredictableErrors ? null : [`${path} must be string`]
     );
 
     rejects(
       `empty arrays`,
       instanceFactory([]),
       schema,
-      overriddenErrors || [`${path} is not of a type(s) string`]
+      unpredictableErrors ? null : [`${path} must be string`]
     );
 
     rejects(
       `empty objects`,
       instanceFactory({}),
       schema,
-      overriddenErrors || [`${path} is not of a type(s) string`]
+      unpredictableErrors ? null : [`${path} must be string`]
     );
   });
 }
 
-validateSvgSchema(`svgSchema`, svgSchema, `instance`, null, (svg) => svg);
+validateSvgSchema(`svgSchema`, svgSchema, `instance`, false, (svg) => svg);

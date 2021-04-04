@@ -1,8 +1,8 @@
-import * as jsonschema from "jsonschema";
+import * as ajv from "ajv";
 import { uuidSchema, UuidSchema } from "../../../uuid-schema";
 
-export const deleteSceneEventSchema: jsonschema.Schema = {
-  $schema: `http://json-schema.org/draft-04/schema#`,
+export const deleteSceneEventSchema: ajv.JSONSchemaType<DeleteSceneEventSchema> = {
+  $schema: `http://json-schema.org/draft-07/schema#`,
   type: `object`,
   additionalProperties: false,
   required: [`type`, `sceneUuid`],

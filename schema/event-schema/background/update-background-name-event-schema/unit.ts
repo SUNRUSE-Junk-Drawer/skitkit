@@ -1,4 +1,4 @@
-import * as jsonschema from "jsonschema";
+import * as ajv from "ajv";
 import {
   accepts,
   rejectsMissingProperty,
@@ -11,9 +11,9 @@ import { Json, updateBackgroundNameEventSchema } from "../../../..";
 
 export function validateUpdateBackgroundNameEventSchema(
   description: string,
-  schema: jsonschema.Schema,
+  schema: ajv.JSONSchemaType<Json>,
   path: string,
-  overriddenErrors: null | ReadonlyArray<string>,
+  unpredictableErrors: boolean,
   instanceFactory: (updateBackgroundNameEvent: Json) => Json
 ): void {
   describe(description, () => {
@@ -31,7 +31,7 @@ export function validateUpdateBackgroundNameEventSchema(
       `type`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         backgroundUuid: `a366e69c-d60e-4e27-bd18-7aea8257bcdb`,
         name: `Test Name`,
@@ -41,9 +41,9 @@ export function validateUpdateBackgroundNameEventSchema(
     rejectsOtherThanExpectedString(
       `type`,
       schema,
-      `${path}.type`,
+      `${path}/type`,
       `updateBackgroundName`,
-      overriddenErrors,
+      unpredictableErrors,
       (type) =>
         instanceFactory({
           type,
@@ -56,7 +56,7 @@ export function validateUpdateBackgroundNameEventSchema(
       `backgroundUuid`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         type: `updateBackgroundName`,
         name: `Test Name`,
@@ -66,8 +66,8 @@ export function validateUpdateBackgroundNameEventSchema(
     validateUuidSchema(
       `backgroundUuid`,
       schema,
-      `${path}.backgroundUuid`,
-      overriddenErrors,
+      `${path}/backgroundUuid`,
+      unpredictableErrors,
       (backgroundUuid) =>
         instanceFactory({
           type: `updateBackgroundName`,
@@ -80,7 +80,7 @@ export function validateUpdateBackgroundNameEventSchema(
       `name`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         type: `updateBackgroundName`,
         backgroundUuid: `a366e69c-d60e-4e27-bd18-7aea8257bcdb`,
@@ -90,8 +90,8 @@ export function validateUpdateBackgroundNameEventSchema(
     validateNameSchema(
       `name`,
       schema,
-      `${path}.name`,
-      overriddenErrors,
+      `${path}/name`,
+      unpredictableErrors,
       (name) =>
         instanceFactory({
           type: `updateBackgroundName`,
@@ -106,7 +106,7 @@ rejectsNonObjects(
   `updateBackgroundNameEventSchema`,
   updateBackgroundNameEventSchema,
   `instance`,
-  null,
+  false,
   (nonObject) => nonObject
 );
 
@@ -114,6 +114,6 @@ validateUpdateBackgroundNameEventSchema(
   `updateBackgroundNameEventSchema`,
   updateBackgroundNameEventSchema,
   `instance`,
-  null,
+  false,
   (updateBackgroundNameEvent) => updateBackgroundNameEvent
 );

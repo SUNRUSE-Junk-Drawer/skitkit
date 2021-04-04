@@ -1,4 +1,4 @@
-import * as jsonschema from "jsonschema";
+import * as ajv from "ajv";
 import { NameSchema, nameSchema } from "../name-schema";
 import { EmoteStateSchema, emoteStateSchema } from "./emote-state-schema";
 import { SceneStateSchema, sceneStateSchema } from "./scene-state-schema";
@@ -12,8 +12,8 @@ import {
   backgroundStateSchema,
 } from "./background-state-schema";
 
-export const stateSchema: jsonschema.Schema = {
-  $schema: `http://json-schema.org/draft-04/schema#`,
+export const stateSchema: ajv.JSONSchemaType<StateSchema> = {
+  $schema: `http://json-schema.org/draft-07/schema#`,
   type: `object`,
   additionalProperties: false,
   required: [`name`, `backgrounds`, `characters`, `emotes`, `scenes`, `lines`],
@@ -25,6 +25,7 @@ export const stateSchema: jsonschema.Schema = {
       patternProperties: {
         "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$": backgroundStateSchema,
       },
+      required: [],
     },
     characters: {
       type: `object`,
@@ -32,6 +33,7 @@ export const stateSchema: jsonschema.Schema = {
       patternProperties: {
         "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$": characterStateSchema,
       },
+      required: [],
     },
     emotes: {
       type: `object`,
@@ -39,6 +41,7 @@ export const stateSchema: jsonschema.Schema = {
       patternProperties: {
         "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$": emoteStateSchema,
       },
+      required: [],
     },
     scenes: {
       type: `object`,
@@ -46,6 +49,7 @@ export const stateSchema: jsonschema.Schema = {
       patternProperties: {
         "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$": sceneStateSchema,
       },
+      required: [],
     },
     lines: {
       type: `object`,
@@ -53,6 +57,7 @@ export const stateSchema: jsonschema.Schema = {
       patternProperties: {
         "^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$": lineStateSchema,
       },
+      required: [],
     },
   },
 };

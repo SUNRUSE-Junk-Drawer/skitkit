@@ -1,4 +1,4 @@
-import * as jsonschema from "jsonschema";
+import * as ajv from "ajv";
 import {
   accepts,
   rejectsMissingProperty,
@@ -10,9 +10,9 @@ import { Json, createCharacterEventSchema } from "../../../..";
 
 export function validateCreateCharacterEventSchema(
   description: string,
-  schema: jsonschema.Schema,
+  schema: ajv.JSONSchemaType<Json>,
   path: string,
-  overriddenErrors: null | ReadonlyArray<string>,
+  unpredictableErrors: boolean,
   instanceFactory: (createCharacterEvent: Json) => Json
 ): void {
   describe(description, () => {
@@ -29,7 +29,7 @@ export function validateCreateCharacterEventSchema(
       `type`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         characterUuid: `a366e69c-d60e-4e27-bd18-7aea8257bcdb`,
       })
@@ -38,9 +38,9 @@ export function validateCreateCharacterEventSchema(
     rejectsOtherThanExpectedString(
       `type`,
       schema,
-      `${path}.type`,
+      `${path}/type`,
       `createCharacter`,
-      overriddenErrors,
+      unpredictableErrors,
       (type) =>
         instanceFactory({
           type,
@@ -52,7 +52,7 @@ export function validateCreateCharacterEventSchema(
       `characterUuid`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         type: `createCharacter`,
       })
@@ -61,8 +61,8 @@ export function validateCreateCharacterEventSchema(
     validateUuidSchema(
       `characterUuid`,
       schema,
-      `${path}.characterUuid`,
-      overriddenErrors,
+      `${path}/characterUuid`,
+      unpredictableErrors,
       (characterUuid) =>
         instanceFactory({
           type: `createCharacter`,
@@ -76,7 +76,7 @@ rejectsNonObjects(
   `createCharacterEventSchema`,
   createCharacterEventSchema,
   `instance`,
-  null,
+  false,
   (nonObject) => nonObject
 );
 
@@ -84,6 +84,6 @@ validateCreateCharacterEventSchema(
   `createCharacterEventSchema`,
   createCharacterEventSchema,
   `instance`,
-  null,
+  false,
   (createCharacterEvent) => createCharacterEvent
 );

@@ -1,4 +1,4 @@
-import * as jsonschema from "jsonschema";
+import * as ajv from "ajv";
 import {
   accepts,
   rejectsMissingProperty,
@@ -11,15 +11,15 @@ import { validateUuidUuidMapSchema } from "../../../uuid-uuid-map-schema/unit";
 
 export function validateCreateStartingLineEventSchema(
   description: string,
-  schema: jsonschema.Schema,
+  schema: ajv.JSONSchemaType<Json>,
   path: string,
-  overriddenErrors: null | ReadonlyArray<string>,
+  unpredictableErrors: boolean,
   instanceFactory: (createStartingLineEvent: Json) => Json
 ): void {
   describe(description, () => {
     accepts(
       `valid`,
-      {
+      instanceFactory({
         type: `createStartingLine`,
         sceneUuid: `382e904a-646a-4e56-b56b-bba8302a206e`,
         lineUuid: `a366e69c-d60e-4e27-bd18-7aea8257bcdb`,
@@ -28,7 +28,7 @@ export function validateCreateStartingLineEventSchema(
           "b3c27180-f8f9-4bbf-94a3-b50df6056114": `d982f79e-c16e-4224-85d9-b93946257052`,
           "6afb0c21-c2e2-414e-a40d-c2fd116f82c7": `4ce28459-6d17-4f33-b63d-3de7969a84cb`,
         },
-      },
+      }),
       schema
     );
 
@@ -36,7 +36,7 @@ export function validateCreateStartingLineEventSchema(
       `type`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         sceneUuid: `382e904a-646a-4e56-b56b-bba8302a206e`,
         lineUuid: `a366e69c-d60e-4e27-bd18-7aea8257bcdb`,
@@ -51,9 +51,9 @@ export function validateCreateStartingLineEventSchema(
     rejectsOtherThanExpectedString(
       `type`,
       schema,
-      `${path}.type`,
+      `${path}/type`,
       `createStartingLine`,
-      overriddenErrors,
+      unpredictableErrors,
       (type) =>
         instanceFactory({
           type,
@@ -71,7 +71,7 @@ export function validateCreateStartingLineEventSchema(
       `sceneUuid`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         type: `createStartingLine`,
         lineUuid: `382e904a-646a-4e56-b56b-bba8302a206e`,
@@ -86,8 +86,8 @@ export function validateCreateStartingLineEventSchema(
     validateUuidSchema(
       `sceneUuid`,
       schema,
-      `${path}.sceneUuid`,
-      overriddenErrors,
+      `${path}/sceneUuid`,
+      unpredictableErrors,
       (sceneUuid) =>
         instanceFactory({
           type: `createStartingLine`,
@@ -105,7 +105,7 @@ export function validateCreateStartingLineEventSchema(
       `lineUuid`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         type: `createStartingLine`,
         sceneUuid: `382e904a-646a-4e56-b56b-bba8302a206e`,
@@ -120,8 +120,8 @@ export function validateCreateStartingLineEventSchema(
     validateUuidSchema(
       `lineUuid`,
       schema,
-      `${path}.lineUuid`,
-      overriddenErrors,
+      `${path}/lineUuid`,
+      unpredictableErrors,
       (lineUuid) =>
         instanceFactory({
           type: `createStartingLine`,
@@ -139,25 +139,26 @@ export function validateCreateStartingLineEventSchema(
       `characterEmoteUuids`,
       schema,
       path,
-      overriddenErrors,
-      {
+      unpredictableErrors,
+      instanceFactory({
         type: `createStartingLine`,
         sceneUuid: `382e904a-646a-4e56-b56b-bba8302a206e`,
         lineUuid: `a366e69c-d60e-4e27-bd18-7aea8257bcdb`,
-      }
+      })
     );
 
     validateUuidUuidMapSchema(
       `characterEmoteUuids`,
       schema,
-      `${path}.characterEmoteUuids`,
-      overriddenErrors,
-      (characterEmoteUuids) => ({
-        type: `createStartingLine`,
-        sceneUuid: `382e904a-646a-4e56-b56b-bba8302a206e`,
-        lineUuid: `a366e69c-d60e-4e27-bd18-7aea8257bcdb`,
-        characterEmoteUuids,
-      })
+      `${path}/characterEmoteUuids`,
+      unpredictableErrors,
+      (characterEmoteUuids) =>
+        instanceFactory({
+          type: `createStartingLine`,
+          sceneUuid: `382e904a-646a-4e56-b56b-bba8302a206e`,
+          lineUuid: `a366e69c-d60e-4e27-bd18-7aea8257bcdb`,
+          characterEmoteUuids,
+        })
     );
   });
 }
@@ -166,7 +167,7 @@ rejectsNonObjects(
   `createStartingLineEventSchema`,
   createStartingLineEventSchema,
   `instance`,
-  null,
+  false,
   (nonObject) => nonObject
 );
 
@@ -174,6 +175,6 @@ validateCreateStartingLineEventSchema(
   `createStartingLineEventSchema`,
   createStartingLineEventSchema,
   `instance`,
-  null,
+  false,
   (createStartingLineEvent) => createStartingLineEvent
 );

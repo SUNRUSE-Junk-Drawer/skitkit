@@ -1,5 +1,5 @@
 import { histories } from ".";
-import { stateSchema } from "../../schema/state-schema";
+import { historySchema } from "../history";
 
 describe(`histories`, () => {
   it(`uses the expected name`, () => {
@@ -11,6 +11,6 @@ describe(`histories`, () => {
   });
 
   it(`uses the expected schema`, () => {
-    expect(histories.schema).toBe(stateSchema);
+    expect(histories.schema).toBe(historySchema);
   });
 });

@@ -1,4 +1,4 @@
-import * as jsonschema from "jsonschema";
+import * as ajv from "ajv";
 import { accepts, rejectsMissingProperty, rejectsNonObjects } from "../../unit";
 import { validateNameSchema } from "../../name-schema/unit";
 import { validateSvgSchema } from "../../svg-schema/unit";
@@ -6,9 +6,9 @@ import { Json, backgroundStateSchema } from "../../..";
 
 export function validateBackgroundStateSchema(
   description: string,
-  schema: jsonschema.Schema,
+  schema: ajv.JSONSchemaType<Json>,
   path: string,
-  overriddenErrors: null | ReadonlyArray<string>,
+  unpredictableErrors: boolean,
   instanceFactory: (backgroundState: Json) => Json
 ): void {
   describe(description, () => {
@@ -25,7 +25,7 @@ export function validateBackgroundStateSchema(
       `non-object`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       (nonObject) => instanceFactory(nonObject)
     );
 
@@ -33,7 +33,7 @@ export function validateBackgroundStateSchema(
       `name`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         svg: `Test Svg`,
       })
@@ -42,8 +42,8 @@ export function validateBackgroundStateSchema(
     validateNameSchema(
       `name`,
       schema,
-      `${path}.name`,
-      overriddenErrors,
+      `${path}/name`,
+      unpredictableErrors,
       (name) =>
         instanceFactory({
           name,
@@ -55,17 +55,22 @@ export function validateBackgroundStateSchema(
       `svg`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         name: `Test Name`,
       })
     );
 
-    validateSvgSchema(`svg`, schema, `${path}.svg`, overriddenErrors, (svg) =>
-      instanceFactory({
-        name: `Test Name`,
-        svg,
-      })
+    validateSvgSchema(
+      `svg`,
+      schema,
+      `${path}/svg`,
+      unpredictableErrors,
+      (svg) =>
+        instanceFactory({
+          name: `Test Name`,
+          svg,
+        })
     );
   });
 }
@@ -74,6 +79,6 @@ validateBackgroundStateSchema(
   `backgroundStateSchema`,
   backgroundStateSchema,
   `instance`,
-  null,
+  false,
   (backgroundState) => backgroundState
 );

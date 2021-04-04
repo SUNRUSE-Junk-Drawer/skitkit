@@ -1,4 +1,4 @@
-import * as jsonschema from "jsonschema";
+import * as ajv from "ajv";
 import {
   accepts,
   rejectsMissingProperty,
@@ -10,9 +10,9 @@ import { Json, updateSceneBackgroundEventSchema } from "../../../..";
 
 export function validateUpdateSceneBackgroundEventSchema(
   description: string,
-  schema: jsonschema.Schema,
+  schema: ajv.JSONSchemaType<Json>,
   path: string,
-  overriddenErrors: null | ReadonlyArray<string>,
+  unpredictableErrors: boolean,
   instanceFactory: (updateSceneBackgroundEvent: Json) => Json
 ): void {
   describe(description, () => {
@@ -30,7 +30,7 @@ export function validateUpdateSceneBackgroundEventSchema(
       `type`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         sceneUuid: `a366e69c-d60e-4e27-bd18-7aea8257bcdb`,
         backgroundUuid: `8870dec9-04b8-4d55-adc1-51d70a84a1a4`,
@@ -40,9 +40,9 @@ export function validateUpdateSceneBackgroundEventSchema(
     rejectsOtherThanExpectedString(
       `type`,
       schema,
-      `${path}.type`,
+      `${path}/type`,
       `updateSceneBackground`,
-      overriddenErrors,
+      unpredictableErrors,
       (type) =>
         instanceFactory({
           type,
@@ -55,7 +55,7 @@ export function validateUpdateSceneBackgroundEventSchema(
       `sceneUuid`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         type: `updateSceneBackground`,
         backgroundUuid: `8870dec9-04b8-4d55-adc1-51d70a84a1a4`,
@@ -65,8 +65,8 @@ export function validateUpdateSceneBackgroundEventSchema(
     validateUuidSchema(
       `sceneUuid`,
       schema,
-      `${path}.sceneUuid`,
-      overriddenErrors,
+      `${path}/sceneUuid`,
+      unpredictableErrors,
       (sceneUuid) =>
         instanceFactory({
           type: `updateSceneBackground`,
@@ -79,7 +79,7 @@ export function validateUpdateSceneBackgroundEventSchema(
       `backgroundUuid`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         type: `updateSceneBackground`,
         sceneUuid: `a366e69c-d60e-4e27-bd18-7aea8257bcdb`,
@@ -89,8 +89,8 @@ export function validateUpdateSceneBackgroundEventSchema(
     validateUuidSchema(
       `backgroundUuid`,
       schema,
-      `${path}.backgroundUuid`,
-      overriddenErrors,
+      `${path}/backgroundUuid`,
+      unpredictableErrors,
       (backgroundUuid) =>
         instanceFactory({
           type: `updateSceneBackground`,
@@ -105,7 +105,7 @@ rejectsNonObjects(
   `updateSceneBackgroundEventSchema`,
   updateSceneBackgroundEventSchema,
   `instance`,
-  null,
+  false,
   (nonObject) => nonObject
 );
 
@@ -113,6 +113,6 @@ validateUpdateSceneBackgroundEventSchema(
   `updateSceneBackgroundEventSchema`,
   updateSceneBackgroundEventSchema,
   `instance`,
-  null,
+  false,
   (updateSceneBackgroundEvent) => updateSceneBackgroundEvent
 );

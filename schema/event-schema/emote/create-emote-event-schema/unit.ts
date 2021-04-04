@@ -1,4 +1,4 @@
-import * as jsonschema from "jsonschema";
+import * as ajv from "ajv";
 import {
   accepts,
   rejectsMissingProperty,
@@ -10,9 +10,9 @@ import { Json, createEmoteEventSchema } from "../../../..";
 
 export function validateCreateEmoteEventSchema(
   description: string,
-  schema: jsonschema.Schema,
+  schema: ajv.JSONSchemaType<Json>,
   path: string,
-  overriddenErrors: null | ReadonlyArray<string>,
+  unpredictableErrors: boolean,
   instanceFactory: (createEmoteEvent: Json) => Json
 ): void {
   describe(description, () => {
@@ -30,7 +30,7 @@ export function validateCreateEmoteEventSchema(
       `type`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         characterUuid: `01d58b64-ae31-43c0-ab7e-1ab1a99b7e30`,
         emoteUuid: `a366e69c-d60e-4e27-bd18-7aea8257bcdb`,
@@ -40,9 +40,9 @@ export function validateCreateEmoteEventSchema(
     rejectsOtherThanExpectedString(
       `type`,
       schema,
-      `${path}.type`,
+      `${path}/type`,
       `createEmote`,
-      overriddenErrors,
+      unpredictableErrors,
       (type) =>
         instanceFactory({
           type,
@@ -55,7 +55,7 @@ export function validateCreateEmoteEventSchema(
       `characterUuid`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         type: `createEmote`,
         emoteUuid: `a366e69c-d60e-4e27-bd18-7aea8257bcdb`,
@@ -65,8 +65,8 @@ export function validateCreateEmoteEventSchema(
     validateUuidSchema(
       `characterUuid`,
       schema,
-      `${path}.characterUuid`,
-      overriddenErrors,
+      `${path}/characterUuid`,
+      unpredictableErrors,
       (characterUuid) =>
         instanceFactory({
           type: `createEmote`,
@@ -79,7 +79,7 @@ export function validateCreateEmoteEventSchema(
       `emoteUuid`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         type: `createEmote`,
         characterUuid: `01d58b64-ae31-43c0-ab7e-1ab1a99b7e30`,
@@ -89,8 +89,8 @@ export function validateCreateEmoteEventSchema(
     validateUuidSchema(
       `emoteUuid`,
       schema,
-      `${path}.emoteUuid`,
-      overriddenErrors,
+      `${path}/emoteUuid`,
+      unpredictableErrors,
       (emoteUuid) =>
         instanceFactory({
           type: `createEmote`,
@@ -105,7 +105,7 @@ rejectsNonObjects(
   `createEmoteEventSchema`,
   createEmoteEventSchema,
   `instance`,
-  null,
+  false,
   (nonObject) => nonObject
 );
 
@@ -113,6 +113,6 @@ validateCreateEmoteEventSchema(
   `createEmoteEventSchema`,
   createEmoteEventSchema,
   `instance`,
-  null,
+  false,
   (createEmoteEvent) => createEmoteEvent
 );

@@ -1,4 +1,4 @@
-import * as jsonschema from "jsonschema";
+import * as ajv from "ajv";
 import {
   accepts,
   rejectsMissingProperty,
@@ -11,9 +11,9 @@ import { Json, updateLineTextEventSchema } from "../../../..";
 
 export function validateUpdateLineTextEventSchema(
   description: string,
-  schema: jsonschema.Schema,
+  schema: ajv.JSONSchemaType<Json>,
   path: string,
-  overriddenErrors: null | ReadonlyArray<string>,
+  unpredictableErrors: boolean,
   instanceFactory: (updateLineTextEvent: Json) => Json
 ): void {
   describe(description, () => {
@@ -31,7 +31,7 @@ export function validateUpdateLineTextEventSchema(
       `type`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         lineUuid: `a366e69c-d60e-4e27-bd18-7aea8257bcdb`,
         text: `Test Text`,
@@ -41,9 +41,9 @@ export function validateUpdateLineTextEventSchema(
     rejectsOtherThanExpectedString(
       `type`,
       schema,
-      `${path}.type`,
+      `${path}/type`,
       `updateLineText`,
-      overriddenErrors,
+      unpredictableErrors,
       (type) =>
         instanceFactory({
           type,
@@ -56,7 +56,7 @@ export function validateUpdateLineTextEventSchema(
       `lineUuid`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         type: `updateLineText`,
         text: `Test Text`,
@@ -66,8 +66,8 @@ export function validateUpdateLineTextEventSchema(
     validateUuidSchema(
       `lineUuid`,
       schema,
-      `${path}.lineUuid`,
-      overriddenErrors,
+      `${path}/lineUuid`,
+      unpredictableErrors,
       (lineUuid) =>
         instanceFactory({
           type: `updateLineText`,
@@ -80,7 +80,7 @@ export function validateUpdateLineTextEventSchema(
       `text`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         type: `updateLineText`,
         lineUuid: `a366e69c-d60e-4e27-bd18-7aea8257bcdb`,
@@ -90,9 +90,9 @@ export function validateUpdateLineTextEventSchema(
     validateUnpaddedString(
       `text`,
       schema,
-      `${path}.text`,
+      `${path}/text`,
       1000,
-      overriddenErrors,
+      unpredictableErrors,
       (text) =>
         instanceFactory({
           type: `updateLineText`,
@@ -107,7 +107,7 @@ rejectsNonObjects(
   `updateLineTextEventSchema`,
   updateLineTextEventSchema,
   `instance`,
-  null,
+  false,
   (nonObject) => nonObject
 );
 
@@ -115,6 +115,6 @@ validateUpdateLineTextEventSchema(
   `updateLineTextEventSchema`,
   updateLineTextEventSchema,
   `instance`,
-  null,
+  false,
   (updateLineTextEvent) => updateLineTextEvent
 );

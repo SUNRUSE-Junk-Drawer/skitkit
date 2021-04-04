@@ -1,7 +1,7 @@
-import * as jsonschema from "jsonschema";
+import * as ajv from "ajv";
 
-export const textSchema: jsonschema.Schema = {
-  $schema: `http://json-schema.org/draft-04/schema#`,
+export const textSchema: ajv.JSONSchemaType<TextSchema> = {
+  $schema: `http://json-schema.org/draft-07/schema#`,
   type: `string`,
   pattern: `^\\S(?:.*\\S)?$`,
   maxLength: 200,

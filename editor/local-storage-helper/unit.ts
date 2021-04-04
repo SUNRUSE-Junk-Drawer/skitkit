@@ -1,4 +1,4 @@
-import * as jsonschema from "jsonschema";
+import * as ajv from "ajv";
 import { LocalStorageHelper } from ".";
 
 type Schema = {
@@ -6,7 +6,7 @@ type Schema = {
   readonly testKeyB: string;
 };
 
-const schema: jsonschema.Schema = {
+const schema: ajv.JSONSchemaType<Schema> = {
   type: `object`,
   required: [`testKeyA`, `testKeyB`],
   additionalProperties: false,
@@ -228,9 +228,9 @@ describe(`LocalStorageHelper`, () => {
       it(`throws the expected error`, () => {
         expect(error).toEqual(
           new Error(`Value for key Test Key PrefixTest Key of localStorage helper Test Helper Name failed JSON schema validation:
- - instance requires property "testKeyA"
- - instance.testKeyB is not of a type(s) string
- - instance.testKeyB is not one of enum values: Test Value B`)
+ - instance must have required property 'testKeyA'
+ - instance/testKeyB must be equal to one of the allowed values
+ - instance/testKeyB must be string`)
         );
       });
 
@@ -482,9 +482,9 @@ describe(`LocalStorageHelper`, () => {
       it(`throws the expected error`, () => {
         expect(error).toEqual(
           new Error(`Value for key Test Key PrefixTest Key of localStorage helper Test Helper Name failed JSON schema validation:
- - instance requires property "testKeyA"
- - instance.testKeyB is not of a type(s) string
- - instance.testKeyB is not one of enum values: Test Value B`)
+ - instance must have required property 'testKeyA'
+ - instance/testKeyB must be equal to one of the allowed values
+ - instance/testKeyB must be string`)
         );
       });
 

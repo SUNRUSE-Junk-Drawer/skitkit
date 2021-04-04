@@ -1,4 +1,4 @@
-import * as jsonschema from "jsonschema";
+import * as ajv from "ajv";
 import {
   accepts,
   rejectsMissingProperty,
@@ -11,9 +11,9 @@ import { validateUuidUuidMapSchema } from "../../../uuid-uuid-map-schema/unit";
 
 export function validateCreateSceneEventSchema(
   description: string,
-  schema: jsonschema.Schema,
+  schema: ajv.JSONSchemaType<Json>,
   path: string,
-  overriddenErrors: null | ReadonlyArray<string>,
+  unpredictableErrors: boolean,
   instanceFactory: (createSceneEvent: Json) => Json
 ): void {
   describe(description, () => {
@@ -36,7 +36,7 @@ export function validateCreateSceneEventSchema(
       `type`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         sceneUuid: `a366e69c-d60e-4e27-bd18-7aea8257bcdb`,
         backgroundUuid: `45ff2bbf-7960-4be7-9742-a0d82316a9f1`,
@@ -51,9 +51,9 @@ export function validateCreateSceneEventSchema(
     rejectsOtherThanExpectedString(
       `type`,
       schema,
-      `${path}.type`,
+      `${path}/type`,
       `createScene`,
-      overriddenErrors,
+      unpredictableErrors,
       (type) =>
         instanceFactory({
           type,
@@ -71,7 +71,7 @@ export function validateCreateSceneEventSchema(
       `sceneUuid`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         type: `createScene`,
         backgroundUuid: `45ff2bbf-7960-4be7-9742-a0d82316a9f1`,
@@ -86,8 +86,8 @@ export function validateCreateSceneEventSchema(
     validateUuidSchema(
       `sceneUuid`,
       schema,
-      `${path}.sceneUuid`,
-      overriddenErrors,
+      `${path}/sceneUuid`,
+      unpredictableErrors,
       (sceneUuid) =>
         instanceFactory({
           type: `createScene`,
@@ -105,7 +105,7 @@ export function validateCreateSceneEventSchema(
       `backgroundUuid`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         type: `createScene`,
         sceneUuid: `a366e69c-d60e-4e27-bd18-7aea8257bcdb`,
@@ -120,8 +120,8 @@ export function validateCreateSceneEventSchema(
     validateUuidSchema(
       `backgroundUuid`,
       schema,
-      `${path}.backgroundUuid`,
-      overriddenErrors,
+      `${path}/backgroundUuid`,
+      unpredictableErrors,
       (backgroundUuid) =>
         instanceFactory({
           type: `createScene`,
@@ -139,7 +139,7 @@ export function validateCreateSceneEventSchema(
       `characterEmoteUuids`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         type: `createScene`,
         sceneUuid: `a366e69c-d60e-4e27-bd18-7aea8257bcdb`,
@@ -150,8 +150,8 @@ export function validateCreateSceneEventSchema(
     validateUuidUuidMapSchema(
       `characterEmoteUuids`,
       schema,
-      `${path}.characterEmoteUuids`,
-      overriddenErrors,
+      `${path}/characterEmoteUuids`,
+      unpredictableErrors,
       (characterEmoteUuids) =>
         instanceFactory({
           type: `createScene`,
@@ -167,7 +167,7 @@ rejectsNonObjects(
   `createSceneEventSchema`,
   createSceneEventSchema,
   `instance`,
-  null,
+  false,
   (nonObject) => nonObject
 );
 
@@ -175,6 +175,6 @@ validateCreateSceneEventSchema(
   `createSceneEventSchema`,
   createSceneEventSchema,
   `instance`,
-  null,
+  false,
   (createSceneEvent) => createSceneEvent
 );

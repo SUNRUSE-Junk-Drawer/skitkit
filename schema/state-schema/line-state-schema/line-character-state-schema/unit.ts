@@ -1,4 +1,4 @@
-import * as jsonschema from "jsonschema";
+import * as ajv from "ajv";
 import {
   accepts,
   rejectsMissingProperty,
@@ -9,9 +9,9 @@ import { validateUuidSchema } from "../../../uuid-schema/unit";
 
 export function validateLineCharacterStateSchema(
   description: string,
-  schema: jsonschema.Schema,
+  schema: ajv.JSONSchemaType<Json>,
   path: string,
-  overriddenErrors: null | ReadonlyArray<string>,
+  unpredictableErrors: boolean,
   instanceFactory: (lineCharacterState: Json) => Json
 ): void {
   describe(description, () => {
@@ -27,7 +27,7 @@ export function validateLineCharacterStateSchema(
       `non-object`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       (nonObject) => instanceFactory(nonObject)
     );
 
@@ -35,15 +35,15 @@ export function validateLineCharacterStateSchema(
       `emoteUuid`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({})
     );
 
     validateUuidSchema(
       `emoteUuid`,
       schema,
-      `${path}.emoteUuid`,
-      overriddenErrors,
+      `${path}/emoteUuid`,
+      unpredictableErrors,
       (emoteUuid) =>
         instanceFactory({
           emoteUuid,
@@ -56,6 +56,6 @@ validateLineCharacterStateSchema(
   `lineCharacterStateSchema`,
   lineCharacterStateSchema,
   `instance`,
-  null,
+  false,
   (lineCharacterState) => lineCharacterState
 );

@@ -1,4 +1,4 @@
-import * as jsonschema from "jsonschema";
+import * as ajv from "ajv";
 import { accepts, rejectsMissingProperty, rejectsNonObjects } from "../../unit";
 import { validateNameSchema } from "../../name-schema/unit";
 import { Json, sceneStateSchema } from "../../..";
@@ -7,9 +7,9 @@ import { validateUuidArraySchema } from "../../uuid-array-schema/unit";
 
 export function validateSceneStateSchema(
   description: string,
-  schema: jsonschema.Schema,
+  schema: ajv.JSONSchemaType<Json>,
   path: string,
-  overriddenErrors: null | ReadonlyArray<string>,
+  unpredictableErrors: boolean,
   instanceFactory: (sceneState: Json) => Json
 ): void {
   describe(description, () => {
@@ -31,7 +31,7 @@ export function validateSceneStateSchema(
       `non-object`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       (nonObject) => instanceFactory(nonObject)
     );
 
@@ -39,7 +39,7 @@ export function validateSceneStateSchema(
       `name`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         backgroundUuid: `9ecc9f98-18b1-4daf-a469-ad35fc74f29c`,
         lineUuids: [
@@ -53,8 +53,8 @@ export function validateSceneStateSchema(
     validateNameSchema(
       `name`,
       schema,
-      `${path}.name`,
-      overriddenErrors,
+      `${path}/name`,
+      unpredictableErrors,
       (name) =>
         instanceFactory({
           name,
@@ -71,7 +71,7 @@ export function validateSceneStateSchema(
       `backgroundUuid`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         name: `Test Name`,
         lineUuids: [
@@ -85,8 +85,8 @@ export function validateSceneStateSchema(
     validateUuidSchema(
       `backgroundUuid`,
       schema,
-      `${path}.backgroundUuid`,
-      overriddenErrors,
+      `${path}/backgroundUuid`,
+      unpredictableErrors,
       (backgroundUuid) =>
         instanceFactory({
           name: `Test Name`,
@@ -103,7 +103,7 @@ export function validateSceneStateSchema(
       `lineUuids`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         name: `Test Name`,
         backgroundUuid: `9ecc9f98-18b1-4daf-a469-ad35fc74f29c`,
@@ -113,8 +113,8 @@ export function validateSceneStateSchema(
     validateUuidArraySchema(
       `lineUuids`,
       schema,
-      `${path}.lineUuids`,
-      overriddenErrors,
+      `${path}/lineUuids`,
+      unpredictableErrors,
       (lineUuids) =>
         instanceFactory({
           name: `Test Name`,
@@ -129,6 +129,6 @@ validateSceneStateSchema(
   `sceneStateSchema`,
   sceneStateSchema,
   `instance`,
-  null,
+  false,
   (sceneState) => sceneState
 );

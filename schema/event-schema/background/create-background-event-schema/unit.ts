@@ -1,4 +1,4 @@
-import * as jsonschema from "jsonschema";
+import * as ajv from "ajv";
 import {
   accepts,
   rejectsMissingProperty,
@@ -10,9 +10,9 @@ import { Json, createBackgroundEventSchema } from "../../../..";
 
 export function validateCreateBackgroundEventSchema(
   description: string,
-  schema: jsonschema.Schema,
+  schema: ajv.JSONSchemaType<Json>,
   path: string,
-  overriddenErrors: null | ReadonlyArray<string>,
+  unpredictableErrors: boolean,
   instanceFactory: (createBackgroundEvent: Json) => Json
 ): void {
   describe(description, () => {
@@ -29,7 +29,7 @@ export function validateCreateBackgroundEventSchema(
       `type`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         backgroundUuid: `a366e69c-d60e-4e27-bd18-7aea8257bcdb`,
       })
@@ -38,9 +38,9 @@ export function validateCreateBackgroundEventSchema(
     rejectsOtherThanExpectedString(
       `type`,
       schema,
-      `${path}.type`,
+      `${path}/type`,
       `createBackground`,
-      overriddenErrors,
+      unpredictableErrors,
       (type) =>
         instanceFactory({
           type,
@@ -52,7 +52,7 @@ export function validateCreateBackgroundEventSchema(
       `backgroundUuid`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         type: `createBackground`,
       })
@@ -61,8 +61,8 @@ export function validateCreateBackgroundEventSchema(
     validateUuidSchema(
       `backgroundUuid`,
       schema,
-      `${path}.backgroundUuid`,
-      overriddenErrors,
+      `${path}/backgroundUuid`,
+      unpredictableErrors,
       (backgroundUuid) =>
         instanceFactory({
           type: `createBackground`,
@@ -76,7 +76,7 @@ rejectsNonObjects(
   `createBackgroundEventSchema`,
   createBackgroundEventSchema,
   `instance`,
-  null,
+  false,
   (nonObject) => nonObject
 );
 
@@ -84,6 +84,6 @@ validateCreateBackgroundEventSchema(
   `createBackgroundEventSchema`,
   createBackgroundEventSchema,
   `instance`,
-  null,
+  false,
   (createBackgroundEvent) => createBackgroundEvent
 );

@@ -1,4 +1,4 @@
-import * as jsonschema from "jsonschema";
+import * as ajv from "ajv";
 import {
   accepts,
   rejectsMissingProperty,
@@ -10,9 +10,9 @@ import { Json, updateLineCharacterEmoteEventSchema } from "../../../..";
 
 export function validateUpdateLineCharacterEmoteEventSchema(
   description: string,
-  schema: jsonschema.Schema,
+  schema: ajv.JSONSchemaType<Json>,
   path: string,
-  overriddenErrors: null | ReadonlyArray<string>,
+  unpredictableErrors: boolean,
   instanceFactory: (updateLineCharacterEmoteEvent: Json) => Json
 ): void {
   describe(description, () => {
@@ -30,7 +30,7 @@ export function validateUpdateLineCharacterEmoteEventSchema(
       `type`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         lineUuid: `a366e69c-d60e-4e27-bd18-7aea8257bcdb`,
         emoteUuid: `abb928c7-51a7-4138-a3b8-1ad78a1773d8`,
@@ -40,9 +40,9 @@ export function validateUpdateLineCharacterEmoteEventSchema(
     rejectsOtherThanExpectedString(
       `type`,
       schema,
-      `${path}.type`,
+      `${path}/type`,
       `updateLineCharacterEmote`,
-      overriddenErrors,
+      unpredictableErrors,
       (type) =>
         instanceFactory({
           type,
@@ -55,7 +55,7 @@ export function validateUpdateLineCharacterEmoteEventSchema(
       `lineUuid`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         type: `updateLineCharacterEmote`,
         emoteUuid: `abb928c7-51a7-4138-a3b8-1ad78a1773d8`,
@@ -65,8 +65,8 @@ export function validateUpdateLineCharacterEmoteEventSchema(
     validateUuidSchema(
       `lineUuid`,
       schema,
-      `${path}.lineUuid`,
-      overriddenErrors,
+      `${path}/lineUuid`,
+      unpredictableErrors,
       (lineUuid) =>
         instanceFactory({
           type: `updateLineCharacterEmote`,
@@ -79,7 +79,7 @@ export function validateUpdateLineCharacterEmoteEventSchema(
       `emoteUuid`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         type: `updateLineCharacterEmote`,
         lineUuid: `0062cfb9-92fe-45a2-bb71-4fb4290c3882`,
@@ -89,8 +89,8 @@ export function validateUpdateLineCharacterEmoteEventSchema(
     validateUuidSchema(
       `emoteUuid`,
       schema,
-      `${path}.emoteUuid`,
-      overriddenErrors,
+      `${path}/emoteUuid`,
+      unpredictableErrors,
       (emoteUuid) =>
         instanceFactory({
           type: `updateLineCharacterEmote`,
@@ -105,7 +105,7 @@ rejectsNonObjects(
   `updateLineCharacterEmoteEventSchema`,
   updateLineCharacterEmoteEventSchema,
   `instance`,
-  null,
+  false,
   (nonObject) => nonObject
 );
 
@@ -113,6 +113,6 @@ validateUpdateLineCharacterEmoteEventSchema(
   `updateLineCharacterEmoteEventSchema`,
   updateLineCharacterEmoteEventSchema,
   `instance`,
-  null,
+  false,
   (updateLineCharacterEmoteEvent) => updateLineCharacterEmoteEvent
 );

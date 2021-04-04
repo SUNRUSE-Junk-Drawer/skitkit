@@ -1,4 +1,4 @@
-import * as jsonschema from "jsonschema";
+import * as ajv from "ajv";
 import {
   accepts,
   rejectsMissingProperty,
@@ -10,9 +10,9 @@ import { Json, updateNameEventSchema } from "../../..";
 
 export function validateUpdateNameEventSchema(
   description: string,
-  schema: jsonschema.Schema,
+  schema: ajv.JSONSchemaType<Json>,
   path: string,
-  overriddenErrors: null | ReadonlyArray<string>,
+  unpredictableErrors: boolean,
   instanceFactory: (updateNameEvent: Json) => Json
 ): void {
   describe(description, () => {
@@ -29,7 +29,7 @@ export function validateUpdateNameEventSchema(
       `type`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         name: `Test Name`,
       })
@@ -38,9 +38,9 @@ export function validateUpdateNameEventSchema(
     rejectsOtherThanExpectedString(
       `type`,
       schema,
-      `${path}.type`,
+      `${path}/type`,
       `updateName`,
-      overriddenErrors,
+      unpredictableErrors,
       (type) =>
         instanceFactory({
           type,
@@ -52,7 +52,7 @@ export function validateUpdateNameEventSchema(
       `name`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         type: `updateName`,
       })
@@ -61,8 +61,8 @@ export function validateUpdateNameEventSchema(
     validateNameSchema(
       `name`,
       schema,
-      `${path}.name`,
-      overriddenErrors,
+      `${path}/name`,
+      unpredictableErrors,
       (name) =>
         instanceFactory({
           type: `updateName`,
@@ -76,7 +76,7 @@ rejectsNonObjects(
   `updateNameEventSchema`,
   updateNameEventSchema,
   `instance`,
-  null,
+  false,
   (nonObject) => nonObject
 );
 
@@ -84,6 +84,6 @@ validateUpdateNameEventSchema(
   `updateNameEventSchema`,
   updateNameEventSchema,
   `instance`,
-  null,
+  false,
   (updateNameEvent) => updateNameEvent
 );

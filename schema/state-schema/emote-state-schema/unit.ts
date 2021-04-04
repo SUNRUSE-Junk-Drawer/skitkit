@@ -1,4 +1,4 @@
-import * as jsonschema from "jsonschema";
+import * as ajv from "ajv";
 import { accepts, rejectsMissingProperty, rejectsNonObjects } from "../../unit";
 import { validateNameSchema } from "../../name-schema/unit";
 import { validateSvgSchema } from "../../svg-schema/unit";
@@ -7,9 +7,9 @@ import { validateUuidSchema } from "../../uuid-schema/unit";
 
 export function validateEmoteStateSchema(
   description: string,
-  schema: jsonschema.Schema,
+  schema: ajv.JSONSchemaType<Json>,
   path: string,
-  overriddenErrors: null | ReadonlyArray<string>,
+  unpredictableErrors: boolean,
   instanceFactory: (emoteState: Json) => Json
 ): void {
   describe(description, () => {
@@ -27,7 +27,7 @@ export function validateEmoteStateSchema(
       `non-object`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       (nonObject) => instanceFactory(nonObject)
     );
 
@@ -35,7 +35,7 @@ export function validateEmoteStateSchema(
       `characterUuid`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         name: `Test Name`,
         svg: `Test Svg`,
@@ -45,8 +45,8 @@ export function validateEmoteStateSchema(
     validateUuidSchema(
       `characterUuid`,
       schema,
-      `${path}.characterUuid`,
-      overriddenErrors,
+      `${path}/characterUuid`,
+      unpredictableErrors,
       (characterUuid) =>
         instanceFactory({
           characterUuid,
@@ -59,7 +59,7 @@ export function validateEmoteStateSchema(
       `name`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         characterUuid: `faee5b62-7886-4957-9cfe-6bd98fdec071`,
         svg: `Test Svg`,
@@ -69,8 +69,8 @@ export function validateEmoteStateSchema(
     validateNameSchema(
       `name`,
       schema,
-      `${path}.name`,
-      overriddenErrors,
+      `${path}/name`,
+      unpredictableErrors,
       (name) =>
         instanceFactory({
           characterUuid: `faee5b62-7886-4957-9cfe-6bd98fdec071`,
@@ -83,19 +83,24 @@ export function validateEmoteStateSchema(
       `svg`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         characterUuid: `faee5b62-7886-4957-9cfe-6bd98fdec071`,
         name: `Test Name`,
       })
     );
 
-    validateSvgSchema(`svg`, schema, `${path}.svg`, overriddenErrors, (svg) =>
-      instanceFactory({
-        characterUuid: `faee5b62-7886-4957-9cfe-6bd98fdec071`,
-        name: `Test Name`,
-        svg,
-      })
+    validateSvgSchema(
+      `svg`,
+      schema,
+      `${path}/svg`,
+      unpredictableErrors,
+      (svg) =>
+        instanceFactory({
+          characterUuid: `faee5b62-7886-4957-9cfe-6bd98fdec071`,
+          name: `Test Name`,
+          svg,
+        })
     );
   });
 }
@@ -104,6 +109,6 @@ validateEmoteStateSchema(
   `emoteStateSchema`,
   emoteStateSchema,
   `instance`,
-  null,
+  false,
   (emoteState) => emoteState
 );

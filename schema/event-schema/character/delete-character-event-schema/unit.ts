@@ -1,4 +1,4 @@
-import * as jsonschema from "jsonschema";
+import * as ajv from "ajv";
 import {
   accepts,
   rejectsMissingProperty,
@@ -10,9 +10,9 @@ import { Json, deleteCharacterEventSchema } from "../../../..";
 
 export function validateDeleteCharacterEventSchema(
   description: string,
-  schema: jsonschema.Schema,
+  schema: ajv.JSONSchemaType<Json>,
   path: string,
-  overriddenErrors: null | ReadonlyArray<string>,
+  unpredictableErrors: boolean,
   instanceFactory: (deleteCharacterEvent: Json) => Json
 ): void {
   describe(description, () => {
@@ -29,7 +29,7 @@ export function validateDeleteCharacterEventSchema(
       `type`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         characterUuid: `a366e69c-d60e-4e27-bd18-7aea8257bcdb`,
       })
@@ -38,9 +38,9 @@ export function validateDeleteCharacterEventSchema(
     rejectsOtherThanExpectedString(
       `type`,
       schema,
-      `${path}.type`,
+      `${path}/type`,
       `deleteCharacter`,
-      overriddenErrors,
+      unpredictableErrors,
       (type) =>
         instanceFactory({
           type,
@@ -52,7 +52,7 @@ export function validateDeleteCharacterEventSchema(
       `characterUuid`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         type: `deleteCharacter`,
       })
@@ -61,8 +61,8 @@ export function validateDeleteCharacterEventSchema(
     validateUuidSchema(
       `characterUuid`,
       schema,
-      `${path}.characterUuid`,
-      overriddenErrors,
+      `${path}/characterUuid`,
+      unpredictableErrors,
       (characterUuid) =>
         instanceFactory({
           type: `deleteCharacter`,
@@ -76,7 +76,7 @@ rejectsNonObjects(
   `deleteCharacterEventSchema`,
   deleteCharacterEventSchema,
   `instance`,
-  null,
+  false,
   (nonObject) => nonObject
 );
 
@@ -84,6 +84,6 @@ validateDeleteCharacterEventSchema(
   `deleteCharacterEventSchema`,
   deleteCharacterEventSchema,
   `instance`,
-  null,
+  false,
   (deleteCharacterEvent) => deleteCharacterEvent
 );

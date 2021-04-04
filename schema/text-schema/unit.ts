@@ -1,12 +1,12 @@
-import * as jsonschema from "jsonschema";
+import * as ajv from "ajv";
 import { validateUnpaddedString } from "../unit";
 import { Json, textSchema } from "../..";
 
 export function validateTextSchema(
   description: string,
-  schema: jsonschema.Schema,
+  schema: ajv.JSONSchemaType<Json>,
   path: string,
-  overriddenErrors: null | ReadonlyArray<string>,
+  unpredictableErrors: boolean,
   instanceFactory: (text: Json) => Json
 ): void {
   validateUnpaddedString(
@@ -14,9 +14,9 @@ export function validateTextSchema(
     schema,
     path,
     200,
-    overriddenErrors,
+    unpredictableErrors,
     instanceFactory
   );
 }
 
-validateTextSchema(`textSchema`, textSchema, `instance`, null, (text) => text);
+validateTextSchema(`textSchema`, textSchema, `instance`, false, (text) => text);

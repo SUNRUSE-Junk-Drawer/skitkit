@@ -1,12 +1,12 @@
-import * as jsonschema from "jsonschema";
+import * as ajv from "ajv";
 import { uuidSchema, UuidSchema } from "../../../uuid-schema";
 import {
   uuidUuidMapSchema,
   UuidUuidMapSchema,
 } from "../../../uuid-uuid-map-schema";
 
-export const createSceneEventSchema: jsonschema.Schema = {
-  $schema: `http://json-schema.org/draft-04/schema#`,
+export const createSceneEventSchema: ajv.JSONSchemaType<CreateSceneEventSchema> = {
+  $schema: `http://json-schema.org/draft-07/schema#`,
   type: `object`,
   additionalProperties: false,
   required: [`type`, `sceneUuid`, `backgroundUuid`, `characterEmoteUuids`],

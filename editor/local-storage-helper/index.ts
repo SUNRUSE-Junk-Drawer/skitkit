@@ -1,4 +1,5 @@
-import * as jsonschema from "jsonschema";
+import * as ajv from "ajv";
+import { ajvInstance } from "../../ajv-instance";
 import { Json } from "../../json";
 
 export interface LocalStorageHelperInterface<T extends Json> {
@@ -11,11 +12,15 @@ export interface LocalStorageHelperInterface<T extends Json> {
 
 export class LocalStorageHelper<T extends Json>
   implements LocalStorageHelperInterface<T> {
+  private readonly validateFunction: ajv.ValidateFunction;
+
   constructor(
     public readonly name: string,
     public readonly keyPrefix: string,
-    public readonly schema: jsonschema.Schema
-  ) {}
+    public readonly schema: ajv.JSONSchemaType<T>
+  ) {
+    this.validateFunction = ajvInstance.compile(schema);
+  }
 
   tryGetItem(key: string): null | T {
     const json = localStorage.getItem(`${this.keyPrefix}${key}`);
@@ -34,14 +39,15 @@ export class LocalStorageHelper<T extends Json>
       );
     }
 
-    const validationResult = jsonschema.validate(deserialized, this.schema);
+    const validationResult = this.validateFunction(deserialized);
 
-    if (!validationResult.valid) {
+    if (!validationResult) {
       throw new Error(
         `Value for key ${this.keyPrefix}${key} of localStorage helper ${
           this.name
-        } failed JSON schema validation:${validationResult.errors
-          .map((e) => `\n - ${e}`)
+        } failed JSON schema validation:${(this.validateFunction
+          .errors as ajv.ErrorObject[])
+          .map((e) => `\n - instance${e.instancePath} ${e.message}`)
           .sort()
           .join(``)}`
       );

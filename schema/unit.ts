@@ -1,24 +1,27 @@
-import * as jsonschema from "jsonschema";
+import * as ajv from "ajv";
 import { Json } from "..";
+import { ajvInstance } from "../ajv-instance";
 
 export function accepts(
   description: string,
   instance: Json,
-  schema: jsonschema.Schema
+  schema: ajv.JSONSchemaType<Json>
 ): void {
   describe(description, () => {
-    let validationResult: jsonschema.ValidatorResult;
+    let validator: ajv.ValidateFunction;
+    let validationResult: boolean;
 
     beforeAll(() => {
-      validationResult = jsonschema.validate(instance, schema);
+      validator = ajvInstance.compile(schema);
+      validationResult = validator(instance);
     });
 
     it(`is valid`, () => {
-      expect(validationResult.valid).toBeTrue();
+      expect(validationResult).toBeTrue();
     });
 
     it(`has no errors`, () => {
-      expect(validationResult.errors).toEqual([]);
+      expect(validator.errors).toBeNull();
     });
   });
 }
@@ -26,41 +29,49 @@ export function accepts(
 export function rejects(
   description: string,
   instance: Json,
-  schema: jsonschema.Schema,
-  errors: ReadonlyArray<string>
+  schema: ajv.JSONSchemaType<Json>,
+  errors: null | ReadonlyArray<string>
 ): void {
   describe(description, () => {
-    let validationResult: jsonschema.ValidatorResult;
+    let validator: ajv.ValidateFunction;
+    let validationResult: boolean;
 
     beforeAll(() => {
-      validationResult = jsonschema.validate(instance, schema);
+      validator = ajvInstance.compile(schema);
+      validationResult = validator(instance);
     });
 
     it(`is not valid`, () => {
-      expect(validationResult.valid).toBeFalse();
+      expect(validationResult).toBeFalse();
     });
 
-    it(`has the expected errors`, () => {
-      for (const error of errors) {
-        expect(
-          validationResult.errors.map((error) => error.toString())
-        ).toContain(error);
-      }
-    });
+    if (errors !== null) {
+      it(`has the expected errors`, () => {
+        for (const error of errors) {
+          expect(
+            (validator.errors ?? []).map(
+              (error) => `instance${error.instancePath} ${error.message}`
+            )
+          ).toContain(error);
+        }
+      });
 
-    it(`has no unexpected errors`, () => {
-      for (const error of validationResult.errors) {
-        expect(errors).toContain(error.toString());
-      }
-    });
+      it(`has no unexpected errors`, () => {
+        for (const error of validator.errors ?? []) {
+          expect(errors).toContain(
+            `instance${error.instancePath} ${error.message}`
+          );
+        }
+      });
+    }
   });
 }
 
 export function rejectsNonObjects(
   description: string,
-  schema: jsonschema.Schema,
+  schema: ajv.JSONSchemaType<Json>,
   path: string,
-  overriddenErrors: null | ReadonlyArray<string>,
+  unpredictableErrors: boolean,
   instanceFactory: (nonObject: Json) => Json
 ): void {
   describe(description, () => {
@@ -68,72 +79,72 @@ export function rejectsNonObjects(
       `empty strings`,
       instanceFactory(``),
       schema,
-      overriddenErrors || [`${path} is not of a type(s) object`]
+      unpredictableErrors ? null : [`${path} must be object`]
     );
 
     rejects(
       `non-empty strings`,
       instanceFactory(`Test Non-Empty String`),
       schema,
-      overriddenErrors || [`${path} is not of a type(s) object`]
+      unpredictableErrors ? null : [`${path} must be object`]
     );
 
     rejects(
       `zero`,
       instanceFactory(0),
       schema,
-      overriddenErrors || [`${path} is not of a type(s) object`]
+      unpredictableErrors ? null : [`${path} must be object`]
     );
 
     rejects(
       `negative zero`,
       instanceFactory(-0),
       schema,
-      overriddenErrors || [`${path} is not of a type(s) object`]
+      unpredictableErrors ? null : [`${path} must be object`]
     );
 
     rejects(
       `positive integers`,
       instanceFactory(326),
       schema,
-      overriddenErrors || [`${path} is not of a type(s) object`]
+      unpredictableErrors ? null : [`${path} must be object`]
     );
 
     rejects(
       `negative integers`,
       instanceFactory(-326),
       schema,
-      overriddenErrors || [`${path} is not of a type(s) object`]
+      unpredictableErrors ? null : [`${path} must be object`]
     );
 
     rejects(
       `positive decimals`,
       instanceFactory(32.6),
       schema,
-      overriddenErrors || [`${path} is not of a type(s) object`]
+      unpredictableErrors ? null : [`${path} must be object`]
     );
 
     rejects(
       `negative decimals`,
       instanceFactory(-32.6),
       schema,
-      overriddenErrors || [`${path} is not of a type(s) object`]
+      unpredictableErrors ? null : [`${path} must be object`]
     );
 
     rejects(
       `empty arrays`,
       instanceFactory([]),
       schema,
-      overriddenErrors || [`${path} is not of a type(s) object`]
+      unpredictableErrors ? null : [`${path} must be object`]
     );
   });
 }
 
 export function rejectsNonArrays(
   description: string,
-  schema: jsonschema.Schema,
+  schema: ajv.JSONSchemaType<Json>,
   path: string,
-  overriddenErrors: null | ReadonlyArray<string>,
+  unpredictableErrors: boolean,
   instanceFactory: (nonObject: Json) => Json
 ): void {
   describe(description, () => {
@@ -141,72 +152,72 @@ export function rejectsNonArrays(
       `empty strings`,
       instanceFactory(``),
       schema,
-      overriddenErrors || [`${path} is not of a type(s) array`]
+      unpredictableErrors ? null : [`${path} must be array`]
     );
 
     rejects(
       `non-empty strings`,
       instanceFactory(`Test Non-Empty String`),
       schema,
-      overriddenErrors || [`${path} is not of a type(s) array`]
+      unpredictableErrors ? null : [`${path} must be array`]
     );
 
     rejects(
       `zero`,
       instanceFactory(0),
       schema,
-      overriddenErrors || [`${path} is not of a type(s) array`]
+      unpredictableErrors ? null : [`${path} must be array`]
     );
 
     rejects(
       `negative zero`,
       instanceFactory(-0),
       schema,
-      overriddenErrors || [`${path} is not of a type(s) array`]
+      unpredictableErrors ? null : [`${path} must be array`]
     );
 
     rejects(
       `positive integers`,
       instanceFactory(326),
       schema,
-      overriddenErrors || [`${path} is not of a type(s) array`]
+      unpredictableErrors ? null : [`${path} must be array`]
     );
 
     rejects(
       `negative integers`,
       instanceFactory(-326),
       schema,
-      overriddenErrors || [`${path} is not of a type(s) array`]
+      unpredictableErrors ? null : [`${path} must be array`]
     );
 
     rejects(
       `positive decimals`,
       instanceFactory(32.6),
       schema,
-      overriddenErrors || [`${path} is not of a type(s) array`]
+      unpredictableErrors ? null : [`${path} must be array`]
     );
 
     rejects(
       `negative decimals`,
       instanceFactory(-32.6),
       schema,
-      overriddenErrors || [`${path} is not of a type(s) array`]
+      unpredictableErrors ? null : [`${path} must be array`]
     );
 
     rejects(
       `empty object`,
       instanceFactory({}),
       schema,
-      overriddenErrors || [`${path} is not of a type(s) array`]
+      unpredictableErrors ? null : [`${path} must be array`]
     );
   });
 }
 
 export function rejectsMissingProperty(
   description: string,
-  schema: jsonschema.Schema,
+  schema: ajv.JSONSchemaType<Json>,
   path: string,
-  overriddenErrors: null | ReadonlyArray<string>,
+  unpredictableErrors: boolean,
   instance: Json
 ): void {
   describe(description, () => {
@@ -214,17 +225,19 @@ export function rejectsMissingProperty(
       `missing`,
       instance,
       schema,
-      overriddenErrors || [`${path} requires property "${description}"`]
+      unpredictableErrors
+        ? null
+        : [`${path} must have required property '${description}'`]
     );
   });
 }
 
 export function rejectsOtherThanExpectedString(
   description: string,
-  schema: jsonschema.Schema,
+  schema: ajv.JSONSchemaType<Json>,
   path: string,
   expected: string,
-  overriddenErrors: null | ReadonlyArray<string>,
+  unpredictableErrors: boolean,
   instanceFactory: (text: Json) => Json
 ): void {
   describe(description, () => {
@@ -232,28 +245,36 @@ export function rejectsOtherThanExpectedString(
       `empty strings`,
       instanceFactory(``),
       schema,
-      overriddenErrors || [`${path} is not one of enum values: ${expected}`]
+      unpredictableErrors
+        ? null
+        : [`${path} must be equal to one of the allowed values`]
     );
 
     rejects(
       `unexpected strings`,
       instanceFactory(`Test Unexpected String`),
       schema,
-      overriddenErrors || [`${path} is not one of enum values: ${expected}`]
+      unpredictableErrors
+        ? null
+        : [`${path} must be equal to one of the allowed values`]
     );
 
     rejects(
       `preceded by white space`,
       instanceFactory(` ${expected}`),
       schema,
-      overriddenErrors || [`${path} is not one of enum values: ${expected}`]
+      unpredictableErrors
+        ? null
+        : [`${path} must be equal to one of the allowed values`]
     );
 
     rejects(
       `followed by white space`,
       instanceFactory(`${expected} `),
       schema,
-      overriddenErrors || [`${path} is not one of enum values: ${expected}`]
+      unpredictableErrors
+        ? null
+        : [`${path} must be equal to one of the allowed values`]
     );
 
     if (expected !== expected.toUpperCase()) {
@@ -261,7 +282,9 @@ export function rejectsOtherThanExpectedString(
         `in upper case`,
         instanceFactory(expected.toUpperCase()),
         schema,
-        overriddenErrors || [`${path} is not one of enum values: ${expected}`]
+        unpredictableErrors
+          ? null
+          : [`${path} must be equal to one of the allowed values`]
       );
     }
 
@@ -270,7 +293,9 @@ export function rejectsOtherThanExpectedString(
         `in lower case`,
         instanceFactory(expected.toLowerCase()),
         schema,
-        overriddenErrors || [`${path} is not one of enum values: ${expected}`]
+        unpredictableErrors
+          ? null
+          : [`${path} must be equal to one of the allowed values`]
       );
     }
 
@@ -278,90 +303,106 @@ export function rejectsOtherThanExpectedString(
       `zero`,
       instanceFactory(0),
       schema,
-      overriddenErrors || [
-        `${path} is not of a type(s) string`,
-        `${path} is not one of enum values: ${expected}`,
-      ]
+      unpredictableErrors
+        ? null
+        : [
+            `${path} must be string`,
+            `${path} must be equal to one of the allowed values`,
+          ]
     );
 
     rejects(
       `negative zero`,
       instanceFactory(-0),
       schema,
-      overriddenErrors || [
-        `${path} is not of a type(s) string`,
-        `${path} is not one of enum values: ${expected}`,
-      ]
+      unpredictableErrors
+        ? null
+        : [
+            `${path} must be string`,
+            `${path} must be equal to one of the allowed values`,
+          ]
     );
 
     rejects(
       `positive integers`,
       instanceFactory(326),
       schema,
-      overriddenErrors || [
-        `${path} is not of a type(s) string`,
-        `${path} is not one of enum values: ${expected}`,
-      ]
+      unpredictableErrors
+        ? null
+        : [
+            `${path} must be string`,
+            `${path} must be equal to one of the allowed values`,
+          ]
     );
 
     rejects(
       `negative integers`,
       instanceFactory(-326),
       schema,
-      overriddenErrors || [
-        `${path} is not of a type(s) string`,
-        `${path} is not one of enum values: ${expected}`,
-      ]
+      unpredictableErrors
+        ? null
+        : [
+            `${path} must be string`,
+            `${path} must be equal to one of the allowed values`,
+          ]
     );
 
     rejects(
       `positive decimals`,
       instanceFactory(32.6),
       schema,
-      overriddenErrors || [
-        `${path} is not of a type(s) string`,
-        `${path} is not one of enum values: ${expected}`,
-      ]
+      unpredictableErrors
+        ? null
+        : [
+            `${path} must be string`,
+            `${path} must be equal to one of the allowed values`,
+          ]
     );
 
     rejects(
       `negative decimals`,
       instanceFactory(-32.6),
       schema,
-      overriddenErrors || [
-        `${path} is not of a type(s) string`,
-        `${path} is not one of enum values: ${expected}`,
-      ]
+      unpredictableErrors
+        ? null
+        : [
+            `${path} must be string`,
+            `${path} must be equal to one of the allowed values`,
+          ]
     );
 
     rejects(
       `empty arrays`,
       instanceFactory([]),
       schema,
-      overriddenErrors || [
-        `${path} is not of a type(s) string`,
-        `${path} is not one of enum values: ${expected}`,
-      ]
+      unpredictableErrors
+        ? null
+        : [
+            `${path} must be string`,
+            `${path} must be equal to one of the allowed values`,
+          ]
     );
 
     rejects(
       `empty objects`,
       instanceFactory({}),
       schema,
-      overriddenErrors || [
-        `${path} is not of a type(s) string`,
-        `${path} is not one of enum values: ${expected}`,
-      ]
+      unpredictableErrors
+        ? null
+        : [
+            `${path} must be string`,
+            `${path} must be equal to one of the allowed values`,
+          ]
     );
   });
 }
 
 export function validateUnpaddedString(
   description: string,
-  schema: jsonschema.Schema,
+  schema: ajv.JSONSchemaType<Json>,
   path: string,
   length: number,
-  overriddenErrors: null | ReadonlyArray<string>,
+  unpredictableErrors: boolean,
   instanceFactory: (name: Json) => Json
 ): void {
   describe(description, () => {
@@ -371,27 +412,27 @@ export function validateUnpaddedString(
       `single white space character`,
       instanceFactory(` `),
       schema,
-      overriddenErrors || [
-        `${path} does not match pattern "^\\\\S(?:.*\\\\S)?$"`,
-      ]
+      unpredictableErrors
+        ? null
+        : [`${path} must match pattern "^\\S(?:.*\\S)?$"`]
     );
 
     rejects(
       `single character with preceding white space`,
       instanceFactory(` T`),
       schema,
-      overriddenErrors || [
-        `${path} does not match pattern "^\\\\S(?:.*\\\\S)?$"`,
-      ]
+      unpredictableErrors
+        ? null
+        : [`${path} must match pattern "^\\S(?:.*\\S)?$"`]
     );
 
     rejects(
       `single character with trailing white space`,
       instanceFactory(`T `),
       schema,
-      overriddenErrors || [
-        `${path} does not match pattern "^\\\\S(?:.*\\\\S)?$"`,
-      ]
+      unpredictableErrors
+        ? null
+        : [`${path} must match pattern "^\\S(?:.*\\S)?$"`]
     );
 
     accepts(`two characters`, instanceFactory(`Te`), schema);
@@ -400,27 +441,27 @@ export function validateUnpaddedString(
       `two white space characters`,
       instanceFactory(`  `),
       schema,
-      overriddenErrors || [
-        `${path} does not match pattern "^\\\\S(?:.*\\\\S)?$"`,
-      ]
+      unpredictableErrors
+        ? null
+        : [`${path} must match pattern "^\\S(?:.*\\S)?$"`]
     );
 
     rejects(
       `two characters with preceding white space`,
       instanceFactory(` Te`),
       schema,
-      overriddenErrors || [
-        `${path} does not match pattern "^\\\\S(?:.*\\\\S)?$"`,
-      ]
+      unpredictableErrors
+        ? null
+        : [`${path} must match pattern "^\\S(?:.*\\S)?$"`]
     );
 
     rejects(
       `two characters with trailing white space`,
       instanceFactory(`Te `),
       schema,
-      overriddenErrors || [
-        `${path} does not match pattern "^\\\\S(?:.*\\\\S)?$"`,
-      ]
+      unpredictableErrors
+        ? null
+        : [`${path} must match pattern "^\\S(?:.*\\S)?$"`]
     );
 
     accepts(`three characters`, instanceFactory(`Tes`), schema);
@@ -434,27 +475,27 @@ export function validateUnpaddedString(
       `three white space characters`,
       instanceFactory(`   `),
       schema,
-      overriddenErrors || [
-        `${path} does not match pattern "^\\\\S(?:.*\\\\S)?$"`,
-      ]
+      unpredictableErrors
+        ? null
+        : [`${path} must match pattern "^\\S(?:.*\\S)?$"`]
     );
 
     rejects(
       `three characters with preceding white space`,
       instanceFactory(` Tes`),
       schema,
-      overriddenErrors || [
-        `${path} does not match pattern "^\\\\S(?:.*\\\\S)?$"`,
-      ]
+      unpredictableErrors
+        ? null
+        : [`${path} must match pattern "^\\S(?:.*\\S)?$"`]
     );
 
     rejects(
       `three characters with trailing white space`,
       instanceFactory(`Tes `),
       schema,
-      overriddenErrors || [
-        `${path} does not match pattern "^\\\\S(?:.*\\\\S)?$"`,
-      ]
+      unpredictableErrors
+        ? null
+        : [`${path} must match pattern "^\\S(?:.*\\S)?$"`]
     );
 
     accepts(`many characters`, instanceFactory(`Test Valid Name`), schema);
@@ -463,18 +504,18 @@ export function validateUnpaddedString(
       `many characters with preceding white space`,
       instanceFactory(` Test Valid Name`),
       schema,
-      overriddenErrors || [
-        `${path} does not match pattern "^\\\\S(?:.*\\\\S)?$"`,
-      ]
+      unpredictableErrors
+        ? null
+        : [`${path} must match pattern "^\\S(?:.*\\S)?$"`]
     );
 
     rejects(
       `many characters with trailing white space`,
       instanceFactory(`Test Valid Name `),
       schema,
-      overriddenErrors || [
-        `${path} does not match pattern "^\\\\S(?:.*\\\\S)?$"`,
-      ]
+      unpredictableErrors
+        ? null
+        : [`${path} must match pattern "^\\S(?:.*\\S)?$"`]
     );
 
     accepts(`the length limit`, instanceFactory(`T`.repeat(length)), schema);
@@ -483,79 +524,81 @@ export function validateUnpaddedString(
       `beyond the length limit`,
       instanceFactory(`T`.repeat(length + 1)),
       schema,
-      overriddenErrors || [`${path} does not meet maximum length of ${length}`]
+      unpredictableErrors
+        ? null
+        : [`${path} must NOT have more than ${length} characters`]
     );
 
     rejects(
       `null`,
       instanceFactory(null),
       schema,
-      overriddenErrors || [`${path} is not of a type(s) string`]
+      unpredictableErrors ? null : [`${path} must be string`]
     );
 
     rejects(
       `empty strings`,
       instanceFactory(``),
       schema,
-      overriddenErrors || [
-        `${path} does not match pattern "^\\\\S(?:.*\\\\S)?$"`,
-      ]
+      unpredictableErrors
+        ? null
+        : [`${path} must match pattern "^\\S(?:.*\\S)?$"`]
     );
 
     rejects(
       `zero`,
       instanceFactory(0),
       schema,
-      overriddenErrors || [`${path} is not of a type(s) string`]
+      unpredictableErrors ? null : [`${path} must be string`]
     );
 
     rejects(
       `negative zero`,
       instanceFactory(-0),
       schema,
-      overriddenErrors || [`${path} is not of a type(s) string`]
+      unpredictableErrors ? null : [`${path} must be string`]
     );
 
     rejects(
       `positive integers`,
       instanceFactory(326),
       schema,
-      overriddenErrors || [`${path} is not of a type(s) string`]
+      unpredictableErrors ? null : [`${path} must be string`]
     );
 
     rejects(
       `negative integers`,
       instanceFactory(-326),
       schema,
-      overriddenErrors || [`${path} is not of a type(s) string`]
+      unpredictableErrors ? null : [`${path} must be string`]
     );
 
     rejects(
       `positive decimals`,
       instanceFactory(32.6),
       schema,
-      overriddenErrors || [`${path} is not of a type(s) string`]
+      unpredictableErrors ? null : [`${path} must be string`]
     );
 
     rejects(
       `negative decimals`,
       instanceFactory(-32.6),
       schema,
-      overriddenErrors || [`${path} is not of a type(s) string`]
+      unpredictableErrors ? null : [`${path} must be string`]
     );
 
     rejects(
       `empty arrays`,
       instanceFactory([]),
       schema,
-      overriddenErrors || [`${path} is not of a type(s) string`]
+      unpredictableErrors ? null : [`${path} must be string`]
     );
 
     rejects(
       `empty objects`,
       instanceFactory({}),
       schema,
-      overriddenErrors || [`${path} is not of a type(s) string`]
+      unpredictableErrors ? null : [`${path} must be string`]
     );
   });
 }

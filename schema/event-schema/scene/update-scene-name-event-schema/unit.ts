@@ -1,4 +1,4 @@
-import * as jsonschema from "jsonschema";
+import * as ajv from "ajv";
 import {
   accepts,
   rejectsMissingProperty,
@@ -11,9 +11,9 @@ import { Json, updateSceneNameEventSchema } from "../../../..";
 
 export function validateUpdateSceneNameEventSchema(
   description: string,
-  schema: jsonschema.Schema,
+  schema: ajv.JSONSchemaType<Json>,
   path: string,
-  overriddenErrors: null | ReadonlyArray<string>,
+  unpredictableErrors: boolean,
   instanceFactory: (updateSceneNameEvent: Json) => Json
 ): void {
   describe(description, () => {
@@ -31,7 +31,7 @@ export function validateUpdateSceneNameEventSchema(
       `type`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         sceneUuid: `a366e69c-d60e-4e27-bd18-7aea8257bcdb`,
         name: `Test Name`,
@@ -41,9 +41,9 @@ export function validateUpdateSceneNameEventSchema(
     rejectsOtherThanExpectedString(
       `type`,
       schema,
-      `${path}.type`,
+      `${path}/type`,
       `updateSceneName`,
-      overriddenErrors,
+      unpredictableErrors,
       (type) =>
         instanceFactory({
           type,
@@ -56,7 +56,7 @@ export function validateUpdateSceneNameEventSchema(
       `sceneUuid`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         type: `updateSceneName`,
         name: `Test Name`,
@@ -66,8 +66,8 @@ export function validateUpdateSceneNameEventSchema(
     validateUuidSchema(
       `sceneUuid`,
       schema,
-      `${path}.sceneUuid`,
-      overriddenErrors,
+      `${path}/sceneUuid`,
+      unpredictableErrors,
       (sceneUuid) =>
         instanceFactory({
           type: `updateSceneName`,
@@ -80,7 +80,7 @@ export function validateUpdateSceneNameEventSchema(
       `name`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         type: `updateSceneName`,
         sceneUuid: `a366e69c-d60e-4e27-bd18-7aea8257bcdb`,
@@ -90,8 +90,8 @@ export function validateUpdateSceneNameEventSchema(
     validateNameSchema(
       `name`,
       schema,
-      `${path}.name`,
-      overriddenErrors,
+      `${path}/name`,
+      unpredictableErrors,
       (name) =>
         instanceFactory({
           type: `updateSceneName`,
@@ -106,7 +106,7 @@ rejectsNonObjects(
   `updateSceneNameEventSchema`,
   updateSceneNameEventSchema,
   `instance`,
-  null,
+  false,
   (nonObject) => nonObject
 );
 
@@ -114,6 +114,6 @@ validateUpdateSceneNameEventSchema(
   `updateSceneNameEventSchema`,
   updateSceneNameEventSchema,
   `instance`,
-  null,
+  false,
   (updateSceneNameEvent) => updateSceneNameEvent
 );

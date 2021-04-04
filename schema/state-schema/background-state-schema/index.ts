@@ -1,9 +1,9 @@
-import * as jsonschema from "jsonschema";
+import * as ajv from "ajv";
 import { NameSchema, nameSchema } from "../../name-schema";
 import { SvgSchema, svgSchema } from "../../svg-schema";
 
-export const backgroundStateSchema: jsonschema.Schema = {
-  $schema: `http://json-schema.org/draft-04/schema#`,
+export const backgroundStateSchema: ajv.JSONSchemaType<BackgroundStateSchema> = {
+  $schema: `http://json-schema.org/draft-07/schema#`,
   type: `object`,
   additionalProperties: false,
   required: [`name`, `svg`],

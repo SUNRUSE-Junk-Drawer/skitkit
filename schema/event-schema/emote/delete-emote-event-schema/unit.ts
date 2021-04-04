@@ -1,4 +1,4 @@
-import * as jsonschema from "jsonschema";
+import * as ajv from "ajv";
 import {
   accepts,
   rejectsMissingProperty,
@@ -10,9 +10,9 @@ import { Json, deleteEmoteEventSchema } from "../../../..";
 
 export function validateDeleteEmoteEventSchema(
   description: string,
-  schema: jsonschema.Schema,
+  schema: ajv.JSONSchemaType<Json>,
   path: string,
-  overriddenErrors: null | ReadonlyArray<string>,
+  unpredictableErrors: boolean,
   instanceFactory: (deleteEmoteEvent: Json) => Json
 ): void {
   describe(description, () => {
@@ -29,7 +29,7 @@ export function validateDeleteEmoteEventSchema(
       `type`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         emoteUuid: `a366e69c-d60e-4e27-bd18-7aea8257bcdb`,
       })
@@ -38,9 +38,9 @@ export function validateDeleteEmoteEventSchema(
     rejectsOtherThanExpectedString(
       `type`,
       schema,
-      `${path}.type`,
+      `${path}/type`,
       `deleteEmote`,
-      overriddenErrors,
+      unpredictableErrors,
       (type) =>
         instanceFactory({
           type,
@@ -52,7 +52,7 @@ export function validateDeleteEmoteEventSchema(
       `emoteUuid`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         type: `deleteEmote`,
       })
@@ -61,8 +61,8 @@ export function validateDeleteEmoteEventSchema(
     validateUuidSchema(
       `emoteUuid`,
       schema,
-      `${path}.emoteUuid`,
-      overriddenErrors,
+      `${path}/emoteUuid`,
+      unpredictableErrors,
       (emoteUuid) =>
         instanceFactory({
           type: `deleteEmote`,
@@ -76,7 +76,7 @@ rejectsNonObjects(
   `deleteEmoteEventSchema`,
   deleteEmoteEventSchema,
   `instance`,
-  null,
+  false,
   (nonObject) => nonObject
 );
 
@@ -84,6 +84,6 @@ validateDeleteEmoteEventSchema(
   `deleteEmoteEventSchema`,
   deleteEmoteEventSchema,
   `instance`,
-  null,
+  false,
   (deleteEmoteEvent) => deleteEmoteEvent
 );

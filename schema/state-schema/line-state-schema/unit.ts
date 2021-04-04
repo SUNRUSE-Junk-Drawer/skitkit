@@ -1,4 +1,4 @@
-import * as jsonschema from "jsonschema";
+import * as ajv from "ajv";
 import { accepts, rejectsMissingProperty, rejectsNonObjects } from "../../unit";
 import { Json, lineStateSchema } from "../../..";
 import {
@@ -10,9 +10,9 @@ import { validateLineCharacterStateSchema } from "./line-character-state-schema/
 
 export function validateLineStateSchema(
   description: string,
-  schema: jsonschema.Schema,
+  schema: ajv.JSONSchemaType<Json>,
   path: string,
-  overriddenErrors: null | ReadonlyArray<string>,
+  unpredictableErrors: boolean,
   instanceFactory: (lineState: Json) => Json
 ): void {
   describe(description, () => {
@@ -40,7 +40,7 @@ export function validateLineStateSchema(
       `non-object`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       (nonObject) => instanceFactory(nonObject)
     );
 
@@ -48,7 +48,7 @@ export function validateLineStateSchema(
       `sceneUuid`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         text: `Test Text`,
         characters: {
@@ -68,8 +68,8 @@ export function validateLineStateSchema(
     validateUuidSchema(
       `sceneUuid`,
       schema,
-      `${path}.sceneUuid`,
-      overriddenErrors,
+      `${path}/sceneUuid`,
+      unpredictableErrors,
       (sceneUuid) =>
         instanceFactory({
           sceneUuid,
@@ -92,7 +92,7 @@ export function validateLineStateSchema(
       `text`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         sceneUuid: `1f44044f-7098-4248-8687-bed8d4901bba`,
         characters: {
@@ -112,8 +112,8 @@ export function validateLineStateSchema(
     validateTextSchema(
       `text`,
       schema,
-      `${path}.text`,
-      overriddenErrors,
+      `${path}/text`,
+      unpredictableErrors,
       (text) =>
         instanceFactory({
           sceneUuid: `1f44044f-7098-4248-8687-bed8d4901bba`,
@@ -136,7 +136,7 @@ export function validateLineStateSchema(
       `characters`,
       schema,
       path,
-      overriddenErrors,
+      unpredictableErrors,
       instanceFactory({
         sceneUuid: `1f44044f-7098-4248-8687-bed8d4901bba`,
         text: `Test Text`,
@@ -146,8 +146,8 @@ export function validateLineStateSchema(
     validateUuidMapSchema(
       `characters`,
       schema,
-      `${path}.characters`,
-      overriddenErrors,
+      `${path}/characters`,
+      unpredictableErrors,
       (characters) =>
         instanceFactory({
           sceneUuid: `1f44044f-7098-4248-8687-bed8d4901bba`,
@@ -162,8 +162,8 @@ export function validateLineStateSchema(
     validateLineCharacterStateSchema(
       `value`,
       schema,
-      `${path}.characters["04f4adef-eb24-4a52-a8e6-4cd431dadc41"]`,
-      overriddenErrors,
+      `${path}/characters/04f4adef-eb24-4a52-a8e6-4cd431dadc41`,
+      unpredictableErrors,
       (lineCharacterState) =>
         instanceFactory({
           sceneUuid: `1f44044f-7098-4248-8687-bed8d4901bba`,
@@ -186,6 +186,6 @@ validateLineStateSchema(
   `lineStateSchema`,
   lineStateSchema,
   `instance`,
-  null,
+  false,
   (lineState) => lineState
 );

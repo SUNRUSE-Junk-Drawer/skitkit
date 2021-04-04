@@ -1,9 +1,9 @@
-import * as jsonschema from "jsonschema";
+import * as ajv from "ajv";
 import { uuidSchema, UuidSchema } from "../../../uuid-schema";
 import { nameSchema, NameSchema } from "../../../name-schema";
 
-export const updateCharacterNameEventSchema: jsonschema.Schema = {
-  $schema: `http://json-schema.org/draft-04/schema#`,
+export const updateCharacterNameEventSchema: ajv.JSONSchemaType<UpdateCharacterNameEventSchema> = {
+  $schema: `http://json-schema.org/draft-07/schema#`,
   type: `object`,
   additionalProperties: false,
   required: [`type`, `characterUuid`, `name`],
