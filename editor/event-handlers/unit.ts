@@ -26,13 +26,20 @@ describe(`eventHandlers`, () => {
       }
     });
 
-    it(`calls addEventListener once`, () => {
-      expect(addEventListener).toHaveBeenCalledTimes(1);
+    it(`calls addEventListener twice`, () => {
+      expect(addEventListener).toHaveBeenCalledTimes(2);
     });
 
     it(`calls addEventListener with a type of "load"`, () => {
       expect(addEventListener).toHaveBeenCalledWith(
         `load`,
+        jasmine.any(Function)
+      );
+    });
+
+    it(`calls addEventListener with a type of "hashchange"`, () => {
+      expect(addEventListener).toHaveBeenCalledWith(
+        `hashchange`,
         jasmine.any(Function)
       );
     });
@@ -59,7 +66,13 @@ describe(`eventHandlers`, () => {
 
         rewire(`.`).__set__(`importedRefresh`, importedRefresh);
 
-        addEventListener.calls.argsFor(0)[1]();
+        const call = addEventListener.calls
+          .allArgs()
+          .find((call) => call[0] === `load`);
+
+        if (call) {
+          call[1]();
+        }
       } finally {
         patchableGlobal.addEventListener = existingAddEventListener;
         patchableGlobal.navigator = existingNavigator;
@@ -67,7 +80,46 @@ describe(`eventHandlers`, () => {
     });
 
     it(`does not call addEventListener again`, () => {
-      expect(addEventListener).toHaveBeenCalledTimes(1);
+      expect(addEventListener).toHaveBeenCalledTimes(2);
+    });
+
+    it(`calls refresh once`, () => {
+      expect(importedRefresh).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe(`when navigator.serviceWorker is not defined and the location hash changes`, () => {
+    let addEventListener: jasmine.Spy;
+    let importedRefresh: jasmine.Spy;
+
+    beforeAll(() => {
+      addEventListener = jasmine.createSpy(`addEventListener`);
+      importedRefresh = jasmine.createSpy(`importedRefresh`);
+
+      const existingAddEventListener = patchableGlobal.addEventListener;
+      const existingNavigator = patchableGlobal.navigator;
+
+      try {
+        patchableGlobal.navigator = {};
+        patchableGlobal.addEventListener = addEventListener;
+
+        rewire(`.`).__set__(`importedRefresh`, importedRefresh);
+
+        const call = addEventListener.calls
+          .allArgs()
+          .find((call) => call[0] === `hashchange`);
+
+        if (call) {
+          call[1]();
+        }
+      } finally {
+        patchableGlobal.addEventListener = existingAddEventListener;
+        patchableGlobal.navigator = existingNavigator;
+      }
+    });
+
+    it(`does not call addEventListener again`, () => {
+      expect(addEventListener).toHaveBeenCalledTimes(2);
     });
 
     it(`calls refresh once`, () => {
@@ -100,13 +152,20 @@ describe(`eventHandlers`, () => {
       }
     });
 
-    it(`calls addEventListener once`, () => {
-      expect(addEventListener).toHaveBeenCalledTimes(1);
+    it(`calls addEventListener twice`, () => {
+      expect(addEventListener).toHaveBeenCalledTimes(2);
     });
 
     it(`calls addEventListener with a type of "load"`, () => {
       expect(addEventListener).toHaveBeenCalledWith(
         `load`,
+        jasmine.any(Function)
+      );
+    });
+
+    it(`calls addEventListener with a type of "hashchange"`, () => {
+      expect(addEventListener).toHaveBeenCalledWith(
+        `hashchange`,
         jasmine.any(Function)
       );
     });
@@ -139,7 +198,13 @@ describe(`eventHandlers`, () => {
 
         rewire(`.`).__set__(`importedRefresh`, importedRefresh);
 
-        addEventListener.calls.argsFor(0)[1]();
+        const call = addEventListener.calls
+          .allArgs()
+          .find((call) => call[0] === `load`);
+
+        if (call) {
+          call[1]();
+        }
       } finally {
         patchableGlobal.addEventListener = existingAddEventListener;
         patchableGlobal.navigator = existingNavigator;
@@ -147,7 +212,7 @@ describe(`eventHandlers`, () => {
     });
 
     it(`does not call addEventListener again`, () => {
-      expect(addEventListener).toHaveBeenCalledTimes(1);
+      expect(addEventListener).toHaveBeenCalledTimes(2);
     });
 
     it(`calls navigator.serviceWorker.register once`, () => {
@@ -156,6 +221,51 @@ describe(`eventHandlers`, () => {
 
     it(`calls navigator.serviceWorker.register with the path to the service worker`, () => {
       expect(register).toHaveBeenCalledWith(`service-worker.js`);
+    });
+
+    it(`calls refresh once`, () => {
+      expect(importedRefresh).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe(`when navigator.serviceWorker is defined and the location hash change`, () => {
+    let addEventListener: jasmine.Spy;
+    let register: jasmine.Spy;
+    let importedRefresh: jasmine.Spy;
+
+    beforeAll(() => {
+      addEventListener = jasmine.createSpy(`addEventListener`);
+      register = jasmine.createSpy(`register`);
+      importedRefresh = jasmine.createSpy(`importedRefresh`);
+
+      const existingAddEventListener = patchableGlobal.addEventListener;
+      const existingNavigator = patchableGlobal.navigator;
+
+      try {
+        patchableGlobal.addEventListener = addEventListener;
+        patchableGlobal.navigator = { serviceWorker: { register } };
+
+        rewire(`.`).__set__(`importedRefresh`, importedRefresh);
+
+        const call = addEventListener.calls
+          .allArgs()
+          .find((call) => call[0] === `hashchange`);
+
+        if (call) {
+          call[1]();
+        }
+      } finally {
+        patchableGlobal.addEventListener = existingAddEventListener;
+        patchableGlobal.navigator = existingNavigator;
+      }
+    });
+
+    it(`does not call addEventListener again`, () => {
+      expect(addEventListener).toHaveBeenCalledTimes(2);
+    });
+
+    it(`does not call navigator.serviceWorker.register`, () => {
+      expect(register).not.toHaveBeenCalled();
     });
 
     it(`calls refresh once`, () => {

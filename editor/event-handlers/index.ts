@@ -12,3 +12,7 @@ if (`serviceWorker` in navigator) {
     importedRefresh();
   });
 }
+
+addEventListener(`hashchange`, () => {
+  importedRefresh();
+});
