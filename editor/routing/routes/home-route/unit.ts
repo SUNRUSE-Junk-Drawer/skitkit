@@ -28,11 +28,6 @@ describe(`homeRouteView`, () => {
             ),
           ])
         ),
-        superfine.h(
-          `footer`,
-          {},
-          superfine.h(`button`, {}, superfine.text(`aha`))
-        ),
       ])
     );
   });
