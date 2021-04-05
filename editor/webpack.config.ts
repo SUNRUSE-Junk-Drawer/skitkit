@@ -33,7 +33,7 @@ export default {
         lang: `en-US`,
         background: `#422`,
         theme_color: `#422`,
-        appleStatusBarStyle: `black`,
+        appleStatusBarStyle: `black-translucent`,
         display: `standalone`,
         orientation: `any`,
         scope: `/`,
