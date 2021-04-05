@@ -51,7 +51,16 @@ html
   text-overflow: ellipsis
   overflow: visible
   line-height: 1.5
-  background: linear-gradient(to right, #422, #211)
+
+  &::before
+    content: ""
+    z-index: -1
+    position: fixed
+    left: 0
+    top: 0
+    width: 100%
+    height: 100%
+    background: linear-gradient(to right, #422, #211)
 
 #app
   font-size: 0.5cm
