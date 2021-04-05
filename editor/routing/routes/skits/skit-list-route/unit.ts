@@ -125,6 +125,7 @@ describe(`skitListRouteView`, () => {
             name: `Test Name E`,
           },
         ],
+        proposedStep: null,
         undoneSteps: [
           {
             type: `updateName`,
@@ -246,6 +247,7 @@ describe(`skitListRouteView`, () => {
                     name: `Test Name E`,
                   },
                 ],
+                proposedStep: null,
                 undoneSteps: [
                   {
                     type: `updateName`,
@@ -264,6 +266,7 @@ describe(`skitListRouteView`, () => {
                   lines: {},
                 },
                 doneSteps: [],
+                proposedStep: null,
                 undoneSteps: [],
               };
           }
@@ -399,6 +402,7 @@ describe(`skitListRouteView`, () => {
                     name: `Test Name E`,
                   },
                 ],
+                proposedStep: null,
                 undoneSteps: [
                   {
                     type: `updateName`,
@@ -417,6 +421,7 @@ describe(`skitListRouteView`, () => {
                   lines: {},
                 },
                 doneSteps: [],
+                proposedStep: null,
                 undoneSteps: [],
               };
             case `3be6883d-9236-4247-9461-b5c113c5e172`:
@@ -430,6 +435,7 @@ describe(`skitListRouteView`, () => {
                   lines: {},
                 },
                 doneSteps: [],
+                proposedStep: null,
                 undoneSteps: [],
               };
           }

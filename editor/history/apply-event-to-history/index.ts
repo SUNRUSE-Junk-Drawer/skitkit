@@ -26,6 +26,7 @@ export function applyEventToHistory(
   return {
     beforeSteps,
     doneSteps,
+    proposedStep: null,
     undoneSteps: [],
   };
 }

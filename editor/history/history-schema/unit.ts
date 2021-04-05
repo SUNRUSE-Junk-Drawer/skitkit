@@ -200,10 +200,62 @@ export function validateHistorySchema(
     };
 
     accepts(
-      `valid`,
+      `valid without proposed step`,
       instanceFactory({
         beforeSteps: validBeforeSteps,
         doneSteps: [validDoneStepA, validDoneStepB, validDoneStepC],
+        proposedStep: null,
+        undoneSteps: [
+          validUndoneStepA,
+          validUndoneStepB,
+          validUndoneStepC,
+          validUndoneStepD,
+        ],
+      }),
+      schema
+    );
+
+    validateEventSchema(
+      `proposed step`,
+      schema,
+      `${path}/proposedStep`,
+      (event) =>
+        instanceFactory({
+          beforeSteps: validBeforeSteps,
+          doneSteps: [validDoneStepA, validDoneStepB, validDoneStepC],
+          proposedStep: event,
+          undoneSteps: [
+            validUndoneStepA,
+            validUndoneStepB,
+            validUndoneStepC,
+            validUndoneStepD,
+          ],
+        })
+    );
+
+    rejectsMissingProperty(
+      `proposedStep`,
+      schema,
+      path,
+      unpredictableErrors,
+      instanceFactory({
+        beforeSteps: validBeforeSteps,
+        doneSteps: [validDoneStepA, validDoneStepB, validDoneStepC],
+        undoneSteps: [
+          validUndoneStepA,
+          validUndoneStepB,
+          validUndoneStepC,
+          validUndoneStepD,
+        ],
+      })
+    );
+
+    accepts(
+      `valid with proposed step`,
+      instanceFactory({
+        beforeSteps: validBeforeSteps,
+        doneSteps: [validDoneStepA, validDoneStepB, validDoneStepC],
+        proposedStep: null,
         undoneSteps: [
           validUndoneStepA,
           validUndoneStepB,
@@ -229,6 +281,7 @@ export function validateHistorySchema(
       unpredictableErrors,
       instanceFactory({
         doneSteps: [validDoneStepA, validDoneStepB, validDoneStepC],
+        proposedStep: null,
         undoneSteps: [
           validUndoneStepA,
           validUndoneStepB,
@@ -246,6 +299,7 @@ export function validateHistorySchema(
       (beforeSteps) => ({
         beforeSteps,
         doneSteps: [validDoneStepA, validDoneStepB, validDoneStepC],
+        proposedStep: null,
         undoneSteps: [
           validUndoneStepA,
           validUndoneStepB,
@@ -262,6 +316,7 @@ export function validateHistorySchema(
       unpredictableErrors,
       instanceFactory({
         beforeSteps: validBeforeSteps,
+        proposedStep: null,
         undoneSteps: [
           validUndoneStepA,
           validUndoneStepB,
@@ -279,6 +334,7 @@ export function validateHistorySchema(
       (doneSteps) => ({
         beforeSteps: validBeforeSteps,
         doneSteps,
+        proposedStep: null,
         undoneSteps: [
           validUndoneStepA,
           validUndoneStepB,
@@ -295,6 +351,7 @@ export function validateHistorySchema(
       (event) => ({
         beforeSteps: validBeforeSteps,
         doneSteps: [validDoneStepA, event, validDoneStepB],
+        proposedStep: null,
         undoneSteps: [
           validUndoneStepA,
           validUndoneStepB,
@@ -312,6 +369,7 @@ export function validateHistorySchema(
       instanceFactory({
         beforeSteps: validBeforeSteps,
         doneSteps: [validDoneStepA, validDoneStepB, validDoneStepC],
+        proposedStep: null,
       })
     );
 
@@ -323,6 +381,7 @@ export function validateHistorySchema(
       (undoneSteps) => ({
         beforeSteps: validBeforeSteps,
         doneSteps: [validDoneStepA, validDoneStepB, validDoneStepC],
+        proposedStep: null,
         undoneSteps,
       })
     );
@@ -334,6 +393,7 @@ export function validateHistorySchema(
       (event) => ({
         beforeSteps: validBeforeSteps,
         doneSteps: [validDoneStepA, validDoneStepB, validDoneStepB],
+        proposedStep: null,
         undoneSteps: [
           validUndoneStepA,
           validUndoneStepB,
