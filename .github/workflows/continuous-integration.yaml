@@ -55,10 +55,8 @@ jobs:
         AWS_SECRET_ACCESS_KEY: ${{ secrets.aws_secret_access_key }}
         AWS_REGION: 'eu-west-1'
         SOURCE_DIR: 'editor/dist'
-    - id: urls
-      run: echo "::set-output name=URLS::$(find ./editor/dist -type f | sed 's/.\/editor\/dist\//https:\/\/skitkit.sunruse.co.uk\//' | sed 's/.*/\"&\"/' | tr '\n' ,)"
     - uses: jakejarvis/cloudflare-purge-action@master
       env:
         CLOUDFLARE_TOKEN: ${{ secrets.CLOUDFLARE_TOKEN }}
         CLOUDFLARE_ZONE: ${{ secrets.CLOUDFLARE_ZONE }}
-        PURGE_URLS: '[${{ steps.urls.outputs.URLS }}"https://skitkit.sunruse.co.uk/"]'
+        PURGE_URLS: '["https://skitkit.sunruse.co.uk/","https://skitkit.sunruse.co.uk/yandex-browser-manifest.json","https://skitkit.sunruse.co.uk/service-worker.js","https://skitkit.sunruse.co.uk/manifest.webapp","https://skitkit.sunruse.co.uk/manifest.json","https://skitkit.sunruse.co.uk/index.html","https://skitkit.sunruse.co.uk/browserconfig.xml"]'
