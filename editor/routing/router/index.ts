@@ -1,28 +1,16 @@
-import { HistorySchema } from "../../history/history-schema";
 import { Route } from "../route";
-import { LocalStorageHelperInterface } from "../../local-storage-helper";
 import {
   skitListRouteView,
   SkitListRouteParameters,
 } from "../routes/skits/skit-list-route";
-import { getCurrentFromHistory } from "../../history/get-current-from-history";
 
 export function router(
-  parsedHash: ReadonlyArray<string>,
-  histories: LocalStorageHelperInterface<HistorySchema>
+  parsedHash: ReadonlyArray<string>
 ): Route<SkitListRouteParameters> {
   parsedHash;
 
   return {
-    parameters: {
-      skits: histories
-        .listKeys()
-        .map((uuid) => ({
-          uuid,
-          name: getCurrentFromHistory(histories.getItem(uuid)).name,
-        }))
-        .sort((a, b) => a.name.localeCompare(b.name)),
-    },
+    parameters: {},
     view: skitListRouteView,
   };
 }

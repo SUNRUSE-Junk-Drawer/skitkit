@@ -1,6 +1,5 @@
 import rewire = require("rewire");
 import * as superfine from "superfine";
-import { histories } from "../../histories";
 import { parseHash } from "../../routing/parse-hash";
 import { router } from "../../routing/router";
 
@@ -14,10 +13,6 @@ describe(`refresh`, () => {
 
     it(`patch`, () => {
       expect(refresh.__get__(`importedPatch`)).toBe(superfine.patch);
-    });
-
-    it(`histories`, () => {
-      expect(refresh.__get__(`importedHistories`)).toBe(histories);
     });
 
     it(`parseHash`, () => {
@@ -66,7 +61,6 @@ describe(`refresh`, () => {
         patchableGlobal.location.hash = `Test Location Hash`;
         refresh.__set__(`importedRouter`, importedRouter);
         refresh.__set__(`importedParseHash`, importedParseHash);
-        refresh.__set__(`importedHistories`, `Test Histories`);
         refresh.__set__(`importedPatch`, importedPatch);
 
         refresh.__get__(`refresh`)();
@@ -88,11 +82,8 @@ describe(`refresh`, () => {
       expect(importedRouter).toHaveBeenCalledTimes(1);
     });
 
-    it(`looks up a route using the parsed hash and histories`, () => {
-      expect(importedRouter).toHaveBeenCalledWith(
-        `Test Parsed Hash`,
-        `Test Histories`
-      );
+    it(`looks up a route using the parsed hash`, () => {
+      expect(importedRouter).toHaveBeenCalledWith(`Test Parsed Hash`);
     });
 
     it(`renders the view once`, () => {

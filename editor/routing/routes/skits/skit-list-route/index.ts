@@ -1,21 +1,28 @@
 import * as superfine from "superfine";
 import { version } from "../../../../../package.json";
-import { UuidSchema } from "../../../../../schema/uuid-schema";
-import { NameSchema } from "../../../../../schema/name-schema";
+import { histories } from "../../../../histories";
+import { getCurrentFromHistory } from "../../../../history/get-current-from-history";
 
-export type SkitListRouteParameters = {
-  readonly skits: ReadonlyArray<{
-    readonly uuid: UuidSchema;
-    readonly name: NameSchema;
-  }>;
-};
+export type SkitListRouteParameters = Record<string, never>;
+
+const importedHistories = histories;
 
 export function skitListRouteView(
   parameters: SkitListRouteParameters
 ): superfine.ElementNode<`body`> {
+  parameters;
+
   let list: superfine.ElementNode<`div` | `ul`>;
 
-  if (parameters.skits.length === 0) {
+  const skits = importedHistories
+    .listKeys()
+    .map((uuid) => ({
+      uuid,
+      name: getCurrentFromHistory(importedHistories.getItem(uuid)).name,
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  if (skits.length === 0) {
     list = superfine.h(
       `div`,
       { className: `empty-list-message` },
@@ -25,7 +32,7 @@ export function skitListRouteView(
     list = superfine.h(
       `ul`,
       { className: `text-list` },
-      parameters.skits.map((skit) =>
+      skits.map((skit) =>
         superfine.h(
           `li`,
           {},

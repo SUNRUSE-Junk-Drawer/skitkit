@@ -1,12 +1,68 @@
+import rewire = require("rewire");
 import * as superfine from "superfine";
-import { skitListRouteView } from ".";
+import { histories } from "../../../../histories";
 
 describe(`skitListRouteView`, () => {
+  describe(`imports`, () => {
+    let skitListRouteView: { __get__(name: string): unknown };
+
+    beforeAll(() => {
+      skitListRouteView = rewire(`.`);
+    });
+
+    it(`histories`, () => {
+      expect(skitListRouteView.__get__(`importedHistories`)).toBe(histories);
+    });
+  });
+
   describe(`when there are no skits`, () => {
+    let historiesTryGetItem: jasmine.Spy;
+    let historiesGetItem: jasmine.Spy;
+    let historiesSetItem: jasmine.Spy;
+    let historiesRemoveItem: jasmine.Spy;
+    let historiesListKeys: jasmine.Spy;
     let dom: superfine.ElementNode<`body`>;
 
     beforeAll(() => {
-      dom = skitListRouteView({ skits: [] });
+      const skitListRouteView = rewire(`.`);
+
+      historiesTryGetItem = jasmine.createSpy(`historiesTryGetItem`);
+      historiesGetItem = jasmine.createSpy(`historiesGetItem`);
+      historiesSetItem = jasmine.createSpy(`historiesSetItem`);
+      historiesRemoveItem = jasmine.createSpy(`historiesRemoveItem`);
+      historiesListKeys = jasmine
+        .createSpy(`historiesListKeys`)
+        .and.returnValue([]);
+
+      skitListRouteView.__set__(`importedHistories`, {
+        tryGetItem: historiesTryGetItem,
+        getItem: historiesGetItem,
+        setItem: historiesSetItem,
+        removeItem: historiesRemoveItem,
+        listKeys: historiesListKeys,
+      });
+
+      dom = skitListRouteView.__get__(`skitListRouteView`)({});
+    });
+
+    it(`lists all keys in the histories`, () => {
+      expect(historiesListKeys).toHaveBeenCalledTimes(1);
+    });
+
+    it(`does not try to get any items of the histories collection`, () => {
+      expect(historiesTryGetItem).not.toHaveBeenCalled();
+    });
+
+    it(`does not get any items from the histories collection`, () => {
+      expect(historiesGetItem).not.toHaveBeenCalled();
+    });
+
+    it(`does not set any items in the histories collection`, () => {
+      expect(historiesSetItem).not.toHaveBeenCalled();
+    });
+
+    it(`does not remove any items from the histories collection`, () => {
+      expect(historiesRemoveItem).not.toHaveBeenCalled();
     });
 
     it(`returns the expected dom`, () => {
@@ -39,17 +95,84 @@ describe(`skitListRouteView`, () => {
   });
 
   describe(`when there is one skit`, () => {
+    let historiesTryGetItem: jasmine.Spy;
+    let historiesGetItem: jasmine.Spy;
+    let historiesSetItem: jasmine.Spy;
+    let historiesRemoveItem: jasmine.Spy;
+    let historiesListKeys: jasmine.Spy;
     let dom: superfine.ElementNode<`body`>;
 
     beforeAll(() => {
-      dom = skitListRouteView({
-        skits: [
+      const skitListRouteView = rewire(`.`);
+
+      historiesTryGetItem = jasmine.createSpy(`historiesTryGetItem`);
+      historiesGetItem = jasmine.createSpy(`historiesGetItem`).and.returnValue({
+        beforeSteps: {
+          name: `Test Name G`,
+          backgrounds: {},
+          characters: {},
+          emotes: {},
+          scenes: {},
+          lines: {},
+        },
+        doneSteps: [
           {
-            uuid: `73c87206-7df9-454e-b3d6-2e73237a6d62`,
-            name: `Test Skit Name A`,
+            type: `updateName`,
+            name: `Test Name C`,
+          },
+          {
+            type: `updateName`,
+            name: `Test Name E`,
+          },
+        ],
+        undoneSteps: [
+          {
+            type: `updateName`,
+            name: `Test Name A`,
           },
         ],
       });
+      historiesSetItem = jasmine.createSpy(`historiesSetItem`);
+      historiesRemoveItem = jasmine.createSpy(`historiesRemoveItem`);
+      historiesListKeys = jasmine
+        .createSpy(`historiesListKeys`)
+        .and.returnValue([`5e6a1c25-6eb1-4ffd-bb4f-4a641fa6f113`]);
+
+      skitListRouteView.__set__(`importedHistories`, {
+        tryGetItem: historiesTryGetItem,
+        getItem: historiesGetItem,
+        setItem: historiesSetItem,
+        removeItem: historiesRemoveItem,
+        listKeys: historiesListKeys,
+      });
+
+      dom = skitListRouteView.__get__(`skitListRouteView`)({});
+    });
+
+    it(`lists all keys in the histories`, () => {
+      expect(historiesListKeys).toHaveBeenCalledTimes(1);
+    });
+
+    it(`does not try to get any items of the histories collection`, () => {
+      expect(historiesTryGetItem).not.toHaveBeenCalled();
+    });
+
+    it(`gets each item of the histories collection`, () => {
+      expect(historiesGetItem).toHaveBeenCalledWith(
+        `5e6a1c25-6eb1-4ffd-bb4f-4a641fa6f113`
+      );
+    });
+
+    it(`gets no further items from the histories collection`, () => {
+      expect(historiesGetItem).toHaveBeenCalledTimes(1);
+    });
+
+    it(`does not set any items in the histories collection`, () => {
+      expect(historiesSetItem).not.toHaveBeenCalled();
+    });
+
+    it(`does not remove any items from the histories collection`, () => {
+      expect(historiesRemoveItem).not.toHaveBeenCalled();
     });
 
     it(`returns the expected dom`, () => {
@@ -73,8 +196,8 @@ describe(`skitListRouteView`, () => {
                 {},
                 superfine.h(
                   `a`,
-                  { href: `#skits/73c87206-7df9-454e-b3d6-2e73237a6d62` },
-                  superfine.text(`Test Skit Name A`)
+                  { href: `#skits/5e6a1c25-6eb1-4ffd-bb4f-4a641fa6f113` },
+                  superfine.text(`Test Name E`)
                 )
               ),
             ]),
@@ -88,21 +211,112 @@ describe(`skitListRouteView`, () => {
   });
 
   describe(`when there are two skits`, () => {
+    let historiesTryGetItem: jasmine.Spy;
+    let historiesGetItem: jasmine.Spy;
+    let historiesSetItem: jasmine.Spy;
+    let historiesRemoveItem: jasmine.Spy;
+    let historiesListKeys: jasmine.Spy;
     let dom: superfine.ElementNode<`body`>;
 
     beforeAll(() => {
-      dom = skitListRouteView({
-        skits: [
-          {
-            uuid: `73c87206-7df9-454e-b3d6-2e73237a6d62`,
-            name: `Test Skit Name A`,
-          },
-          {
-            uuid: `b4d4d89f-41b6-476d-954b-7e14d5401b41`,
-            name: `Test Skit Name B`,
-          },
-        ],
+      const skitListRouteView = rewire(`.`);
+
+      historiesTryGetItem = jasmine.createSpy(`historiesTryGetItem`);
+      historiesGetItem = jasmine
+        .createSpy(`historiesGetItem`)
+        .and.callFake((key) => {
+          switch (key) {
+            case `5e6a1c25-6eb1-4ffd-bb4f-4a641fa6f113`:
+              return {
+                beforeSteps: {
+                  name: `Test Name G`,
+                  backgrounds: {},
+                  characters: {},
+                  emotes: {},
+                  scenes: {},
+                  lines: {},
+                },
+                doneSteps: [
+                  {
+                    type: `updateName`,
+                    name: `Test Name C`,
+                  },
+                  {
+                    type: `updateName`,
+                    name: `Test Name E`,
+                  },
+                ],
+                undoneSteps: [
+                  {
+                    type: `updateName`,
+                    name: `Test Name A`,
+                  },
+                ],
+              };
+            case `4c4c3e22-8ea3-4735-b828-7aeb064d0465`:
+              return {
+                beforeSteps: {
+                  name: `Test Name A`,
+                  backgrounds: {},
+                  characters: {},
+                  emotes: {},
+                  scenes: {},
+                  lines: {},
+                },
+                doneSteps: [],
+                undoneSteps: [],
+              };
+          }
+
+          throw new Error(`Unexpected key "${key}".`);
+        });
+      historiesSetItem = jasmine.createSpy(`historiesSetItem`);
+      historiesRemoveItem = jasmine.createSpy(`historiesRemoveItem`);
+      historiesListKeys = jasmine
+        .createSpy(`historiesListKeys`)
+        .and.returnValue([
+          `5e6a1c25-6eb1-4ffd-bb4f-4a641fa6f113`,
+          `4c4c3e22-8ea3-4735-b828-7aeb064d0465`,
+        ]);
+
+      skitListRouteView.__set__(`importedHistories`, {
+        tryGetItem: historiesTryGetItem,
+        getItem: historiesGetItem,
+        setItem: historiesSetItem,
+        removeItem: historiesRemoveItem,
+        listKeys: historiesListKeys,
       });
+
+      dom = skitListRouteView.__get__(`skitListRouteView`)({});
+    });
+
+    it(`lists all keys in the histories`, () => {
+      expect(historiesListKeys).toHaveBeenCalledTimes(1);
+    });
+
+    it(`does not try to get any items of the histories collection`, () => {
+      expect(historiesTryGetItem).not.toHaveBeenCalled();
+    });
+
+    it(`gets each item of the histories collection`, () => {
+      expect(historiesGetItem).toHaveBeenCalledWith(
+        `5e6a1c25-6eb1-4ffd-bb4f-4a641fa6f113`
+      );
+      expect(historiesGetItem).toHaveBeenCalledWith(
+        `4c4c3e22-8ea3-4735-b828-7aeb064d0465`
+      );
+    });
+
+    it(`gets no further items from the histories collection`, () => {
+      expect(historiesGetItem).toHaveBeenCalledTimes(2);
+    });
+
+    it(`does not set any items in the histories collection`, () => {
+      expect(historiesSetItem).not.toHaveBeenCalled();
+    });
+
+    it(`does not remove any items from the histories collection`, () => {
+      expect(historiesRemoveItem).not.toHaveBeenCalled();
     });
 
     it(`returns the expected dom`, () => {
@@ -126,8 +340,8 @@ describe(`skitListRouteView`, () => {
                 {},
                 superfine.h(
                   `a`,
-                  { href: `#skits/73c87206-7df9-454e-b3d6-2e73237a6d62` },
-                  superfine.text(`Test Skit Name A`)
+                  { href: `#skits/4c4c3e22-8ea3-4735-b828-7aeb064d0465` },
+                  superfine.text(`Test Name A`)
                 )
               ),
               superfine.h(
@@ -135,8 +349,8 @@ describe(`skitListRouteView`, () => {
                 {},
                 superfine.h(
                   `a`,
-                  { href: `#skits/b4d4d89f-41b6-476d-954b-7e14d5401b41` },
-                  superfine.text(`Test Skit Name B`)
+                  { href: `#skits/5e6a1c25-6eb1-4ffd-bb4f-4a641fa6f113` },
+                  superfine.text(`Test Name E`)
                 )
               ),
             ]),
@@ -150,25 +364,129 @@ describe(`skitListRouteView`, () => {
   });
 
   describe(`when there are three skits`, () => {
+    let historiesTryGetItem: jasmine.Spy;
+    let historiesGetItem: jasmine.Spy;
+    let historiesSetItem: jasmine.Spy;
+    let historiesRemoveItem: jasmine.Spy;
+    let historiesListKeys: jasmine.Spy;
     let dom: superfine.ElementNode<`body`>;
 
     beforeAll(() => {
-      dom = skitListRouteView({
-        skits: [
-          {
-            uuid: `73c87206-7df9-454e-b3d6-2e73237a6d62`,
-            name: `Test Skit Name A`,
-          },
-          {
-            uuid: `b4d4d89f-41b6-476d-954b-7e14d5401b41`,
-            name: `Test Skit Name B`,
-          },
-          {
-            uuid: `5fd21596-798c-48a8-9931-ca7feeb7a78e`,
-            name: `Test Skit Name C`,
-          },
-        ],
+      const skitListRouteView = rewire(`.`);
+
+      historiesTryGetItem = jasmine.createSpy(`historiesTryGetItem`);
+      historiesGetItem = jasmine
+        .createSpy(`historiesGetItem`)
+        .and.callFake((key) => {
+          switch (key) {
+            case `5e6a1c25-6eb1-4ffd-bb4f-4a641fa6f113`:
+              return {
+                beforeSteps: {
+                  name: `Test Name G`,
+                  backgrounds: {},
+                  characters: {},
+                  emotes: {},
+                  scenes: {},
+                  lines: {},
+                },
+                doneSteps: [
+                  {
+                    type: `updateName`,
+                    name: `Test Name C`,
+                  },
+                  {
+                    type: `updateName`,
+                    name: `Test Name E`,
+                  },
+                ],
+                undoneSteps: [
+                  {
+                    type: `updateName`,
+                    name: `Test Name A`,
+                  },
+                ],
+              };
+            case `4c4c3e22-8ea3-4735-b828-7aeb064d0465`:
+              return {
+                beforeSteps: {
+                  name: `Test Name A`,
+                  backgrounds: {},
+                  characters: {},
+                  emotes: {},
+                  scenes: {},
+                  lines: {},
+                },
+                doneSteps: [],
+                undoneSteps: [],
+              };
+            case `3be6883d-9236-4247-9461-b5c113c5e172`:
+              return {
+                beforeSteps: {
+                  name: `Test Name H`,
+                  backgrounds: {},
+                  characters: {},
+                  emotes: {},
+                  scenes: {},
+                  lines: {},
+                },
+                doneSteps: [],
+                undoneSteps: [],
+              };
+          }
+
+          throw new Error(`Unexpected key "${key}".`);
+        });
+      historiesSetItem = jasmine.createSpy(`historiesSetItem`);
+      historiesRemoveItem = jasmine.createSpy(`historiesRemoveItem`);
+      historiesListKeys = jasmine
+        .createSpy(`historiesListKeys`)
+        .and.returnValue([
+          `5e6a1c25-6eb1-4ffd-bb4f-4a641fa6f113`,
+          `4c4c3e22-8ea3-4735-b828-7aeb064d0465`,
+          `3be6883d-9236-4247-9461-b5c113c5e172`,
+        ]);
+
+      skitListRouteView.__set__(`importedHistories`, {
+        tryGetItem: historiesTryGetItem,
+        getItem: historiesGetItem,
+        setItem: historiesSetItem,
+        removeItem: historiesRemoveItem,
+        listKeys: historiesListKeys,
       });
+
+      dom = skitListRouteView.__get__(`skitListRouteView`)({});
+    });
+
+    it(`lists all keys in the histories`, () => {
+      expect(historiesListKeys).toHaveBeenCalledTimes(1);
+    });
+
+    it(`does not try to get any items of the histories collection`, () => {
+      expect(historiesTryGetItem).not.toHaveBeenCalled();
+    });
+
+    it(`gets each item of the histories collection`, () => {
+      expect(historiesGetItem).toHaveBeenCalledWith(
+        `5e6a1c25-6eb1-4ffd-bb4f-4a641fa6f113`
+      );
+      expect(historiesGetItem).toHaveBeenCalledWith(
+        `4c4c3e22-8ea3-4735-b828-7aeb064d0465`
+      );
+      expect(historiesGetItem).toHaveBeenCalledWith(
+        `3be6883d-9236-4247-9461-b5c113c5e172`
+      );
+    });
+
+    it(`gets no further items from the histories collection`, () => {
+      expect(historiesGetItem).toHaveBeenCalledTimes(3);
+    });
+
+    it(`does not set any items in the histories collection`, () => {
+      expect(historiesSetItem).not.toHaveBeenCalled();
+    });
+
+    it(`does not remove any items from the histories collection`, () => {
+      expect(historiesRemoveItem).not.toHaveBeenCalled();
     });
 
     it(`returns the expected dom`, () => {
@@ -192,8 +510,8 @@ describe(`skitListRouteView`, () => {
                 {},
                 superfine.h(
                   `a`,
-                  { href: `#skits/73c87206-7df9-454e-b3d6-2e73237a6d62` },
-                  superfine.text(`Test Skit Name A`)
+                  { href: `#skits/4c4c3e22-8ea3-4735-b828-7aeb064d0465` },
+                  superfine.text(`Test Name A`)
                 )
               ),
               superfine.h(
@@ -201,8 +519,8 @@ describe(`skitListRouteView`, () => {
                 {},
                 superfine.h(
                   `a`,
-                  { href: `#skits/b4d4d89f-41b6-476d-954b-7e14d5401b41` },
-                  superfine.text(`Test Skit Name B`)
+                  { href: `#skits/5e6a1c25-6eb1-4ffd-bb4f-4a641fa6f113` },
+                  superfine.text(`Test Name E`)
                 )
               ),
               superfine.h(
@@ -210,8 +528,8 @@ describe(`skitListRouteView`, () => {
                 {},
                 superfine.h(
                   `a`,
-                  { href: `#skits/5fd21596-798c-48a8-9931-ca7feeb7a78e` },
-                  superfine.text(`Test Skit Name C`)
+                  { href: `#skits/3be6883d-9236-4247-9461-b5c113c5e172` },
+                  superfine.text(`Test Name H`)
                 )
               ),
             ]),
