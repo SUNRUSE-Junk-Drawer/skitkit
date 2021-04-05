@@ -95,7 +95,7 @@ describe(`router`, () => {
         listKeys: historiesListKeys,
       };
 
-      route = router(histories);
+      route = router([], histories);
     });
 
     it(`lists all keys in the histories`, () => {

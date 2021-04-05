@@ -1,6 +1,7 @@
 import rewire = require("rewire");
 import * as superfine from "superfine";
 import { histories } from "../../histories";
+import { parseHash } from "../../routing/parse-hash";
 import { router } from "../../routing/router";
 
 describe(`refresh`, () => {
@@ -19,6 +20,10 @@ describe(`refresh`, () => {
       expect(refresh.__get__(`importedHistories`)).toBe(histories);
     });
 
+    it(`parseHash`, () => {
+      expect(refresh.__get__(`importedParseHash`)).toBe(parseHash);
+    });
+
     it(`router`, () => {
       expect(refresh.__get__(`importedRouter`)).toBe(router);
     });
@@ -29,6 +34,7 @@ describe(`refresh`, () => {
     const patchableGlobal = global as any;
     let view: jasmine.Spy;
     let importedRouter: jasmine.Spy;
+    let importedParseHash: jasmine.Spy;
     let importedPatch: jasmine.Spy;
 
     beforeAll(() => {
@@ -41,30 +47,52 @@ describe(`refresh`, () => {
         view,
       });
 
+      importedParseHash = jasmine
+        .createSpy(`importedParseHash`)
+        .and.returnValue(`Test Parsed Hash`);
+
       importedPatch = jasmine.createSpy(`importedPatch`);
 
-      const refresh = rewire(`.`);
-
-      refresh.__set__(`importedRouter`, importedRouter);
-      refresh.__set__(`importedHistories`, `Test Histories`);
-      refresh.__set__(`importedPatch`, importedPatch);
-
       const existingDocument = patchableGlobal.document;
+      const existingLocation = patchableGlobal.location;
 
       try {
-        patchableGlobal.document = { body: `Test Body` };
+        patchableGlobal.document = { body: `Test Old Body` };
+        patchableGlobal.location = { hash: `Test Old Location Hash` };
+
+        const refresh = rewire(`.`);
+
+        patchableGlobal.document.body = `Test Body`;
+        patchableGlobal.location.hash = `Test Location Hash`;
+        refresh.__set__(`importedRouter`, importedRouter);
+        refresh.__set__(`importedParseHash`, importedParseHash);
+        refresh.__set__(`importedHistories`, `Test Histories`);
+        refresh.__set__(`importedPatch`, importedPatch);
+
         refresh.__get__(`refresh`)();
       } finally {
         patchableGlobal.document = existingDocument;
+        patchableGlobal.location = existingLocation;
       }
+    });
+
+    it(`parses one hash`, () => {
+      expect(importedParseHash).toHaveBeenCalledTimes(1);
+    });
+
+    it(`parses the location's hash`, () => {
+      expect(importedParseHash).toHaveBeenCalledWith(`Test Location Hash`);
     });
 
     it(`looks up one route`, () => {
       expect(importedRouter).toHaveBeenCalledTimes(1);
     });
 
-    it(`looks up a route using the histories`, () => {
-      expect(importedRouter).toHaveBeenCalledWith(`Test Histories`);
+    it(`looks up a route using the parsed hash and histories`, () => {
+      expect(importedRouter).toHaveBeenCalledWith(
+        `Test Parsed Hash`,
+        `Test Histories`
+      );
     });
 
     it(`renders the view once`, () => {

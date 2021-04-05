@@ -8,8 +8,11 @@ import {
 import { getCurrentFromHistory } from "../../history/get-current-from-history";
 
 export function router(
+  parsedHash: ReadonlyArray<string>,
   histories: LocalStorageHelperInterface<HistorySchema>
 ): Route<SkitListRouteParameters> {
+  parsedHash;
+
   return {
     parameters: {
       skits: histories
