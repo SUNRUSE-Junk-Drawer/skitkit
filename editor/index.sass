@@ -130,8 +130,8 @@ nav
 
 article
   max-width: 25rem
-  margin: 4rem auto 5rem auto
-  padding: 0 1rem
+  margin: calc(env(safe-area-inset-top) + 4rem) auto calc(env(safe-area-inset-bottom) + 4rem) auto
+  padding: 0 calc(env(safe-area-inset-right) + 1rem) 0 calc(env(safe-area-inset-left) + 1rem)
 
 .text-list
   position: relative
