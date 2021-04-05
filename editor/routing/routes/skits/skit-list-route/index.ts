@@ -2,6 +2,7 @@ import * as superfine from "superfine";
 import { version } from "../../../../../package.json";
 import { histories } from "../../../../histories";
 import { getCurrentFromHistory } from "../../../../history/get-current-from-history";
+import { newSkit } from "./new-skit";
 
 export type SkitListRouteParameters = Record<string, never>;
 
@@ -62,7 +63,7 @@ export function skitListRouteView(
     superfine.h(
       `footer`,
       {},
-      superfine.h(`button`, {}, superfine.text(`New Skit`))
+      superfine.h(`button`, { onclick: newSkit }, superfine.text(`New Skit`))
     ),
   ]);
 }

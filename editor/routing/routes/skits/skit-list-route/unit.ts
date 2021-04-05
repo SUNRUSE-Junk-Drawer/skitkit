@@ -1,6 +1,7 @@
 import rewire = require("rewire");
 import * as superfine from "superfine";
 import { histories } from "../../../../histories";
+import { newSkit } from "./new-skit";
 
 describe(`skitListRouteView`, () => {
   describe(`imports`, () => {
@@ -87,7 +88,11 @@ describe(`skitListRouteView`, () => {
             ),
           ]),
           superfine.h(`footer`, {}, [
-            superfine.h(`button`, {}, superfine.text(`New Skit`)),
+            superfine.h(
+              `button`,
+              { onclick: newSkit },
+              superfine.text(`New Skit`)
+            ),
           ]),
         ])
       );
@@ -204,7 +209,11 @@ describe(`skitListRouteView`, () => {
             ]),
           ]),
           superfine.h(`footer`, {}, [
-            superfine.h(`button`, {}, superfine.text(`New Skit`)),
+            superfine.h(
+              `button`,
+              { onclick: newSkit },
+              superfine.text(`New Skit`)
+            ),
           ]),
         ])
       );
@@ -359,7 +368,11 @@ describe(`skitListRouteView`, () => {
             ]),
           ]),
           superfine.h(`footer`, {}, [
-            superfine.h(`button`, {}, superfine.text(`New Skit`)),
+            superfine.h(
+              `button`,
+              { onclick: newSkit },
+              superfine.text(`New Skit`)
+            ),
           ]),
         ])
       );
@@ -541,7 +554,11 @@ describe(`skitListRouteView`, () => {
             ]),
           ]),
           superfine.h(`footer`, {}, [
-            superfine.h(`button`, {}, superfine.text(`New Skit`)),
+            superfine.h(
+              `button`,
+              { onclick: newSkit },
+              superfine.text(`New Skit`)
+            ),
           ]),
         ])
       );

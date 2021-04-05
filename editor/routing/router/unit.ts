@@ -4,12 +4,20 @@ import {
   skitListRouteView,
   SkitListRouteParameters,
 } from "../routes/skits/skit-list-route";
-import { homeRouteView } from "../routes/home-route";
-import { notFoundRouteView } from "../routes/not-found-route";
+import { HomeRouteParameters, homeRouteView } from "../routes/home-route";
+import {
+  NotFoundRouteParameters,
+  notFoundRouteView,
+} from "../routes/not-found-route";
+import { SkitRouteParameters, skitRouteView } from "../routes/skits/skit-route";
 
 describe(`router`, () => {
   describe(`no route`, () => {
-    let route: Route<SkitListRouteParameters>;
+    let route:
+      | Route<HomeRouteParameters>
+      | Route<NotFoundRouteParameters>
+      | Route<SkitListRouteParameters>
+      | Route<SkitRouteParameters>;
 
     beforeAll(() => {
       route = router([]);
@@ -25,7 +33,11 @@ describe(`router`, () => {
   });
 
   describe(`skit list`, () => {
-    let route: Route<SkitListRouteParameters>;
+    let route:
+      | Route<HomeRouteParameters>
+      | Route<NotFoundRouteParameters>
+      | Route<SkitListRouteParameters>
+      | Route<SkitRouteParameters>;
 
     beforeAll(() => {
       route = router([`skits`]);
@@ -40,8 +52,32 @@ describe(`router`, () => {
     });
   });
 
+  describe(`skit`, () => {
+    let route:
+      | Route<HomeRouteParameters>
+      | Route<NotFoundRouteParameters>
+      | Route<SkitListRouteParameters>
+      | Route<SkitRouteParameters>;
+
+    beforeAll(() => {
+      route = router([`skits`, `Test Skit Uuid`]);
+    });
+
+    it(`uses the skit view`, () => {
+      expect(route.view).toBe(skitRouteView);
+    });
+
+    it(`includes the skit UUID as a parameter`, () => {
+      expect(route.parameters).toEqual({ skitUuid: `Test Skit Uuid` });
+    });
+  });
+
   describe(`unknown`, () => {
-    let route: Route<SkitListRouteParameters>;
+    let route:
+      | Route<HomeRouteParameters>
+      | Route<NotFoundRouteParameters>
+      | Route<SkitListRouteParameters>
+      | Route<SkitRouteParameters>;
 
     beforeAll(() => {
       route = router([`unknown`]);
