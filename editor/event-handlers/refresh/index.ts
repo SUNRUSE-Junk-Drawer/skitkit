@@ -9,5 +9,13 @@ const importedRouter = router;
 export function refresh(): void {
   const route = importedRouter(importedParseHash(location.hash));
 
-  importedPatch(document.body as HTMLBodyElement, route.view(route.parameters));
+  const loosenedRoute = route as {
+    readonly parameters: Record<string, unknown>;
+    view(parameters: Record<string, unknown>): superfine.ElementNode<`body`>;
+  };
+
+  importedPatch(
+    document.body as HTMLBodyElement,
+    loosenedRoute.view(loosenedRoute.parameters)
+  );
 }
