@@ -1,12 +1,13 @@
 import * as superfine from "superfine";
 import { version } from "../../../../../package.json";
 import { histories } from "../../../../histories";
-import { getCurrentFromHistory } from "../../../../history/get-current-from-history";
+import { getCurrentBySkitUuid } from "../../../../history/get-current-by-skit-uuid";
 import { newSkit } from "./new-skit";
 
 export type SkitListRouteParameters = Record<string, never>;
 
 const importedHistories = histories;
+const importedGetCurrentBySkitUuid = getCurrentBySkitUuid;
 
 export function skitListRouteView(
   parameters: SkitListRouteParameters
@@ -19,7 +20,7 @@ export function skitListRouteView(
     .listKeys()
     .map((uuid) => ({
       uuid,
-      name: getCurrentFromHistory(importedHistories.getItem(uuid)).name,
+      name: importedGetCurrentBySkitUuid(uuid).name,
     }))
     .sort((a, b) => a.name.localeCompare(b.name));
 
