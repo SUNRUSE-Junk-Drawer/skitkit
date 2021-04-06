@@ -12,8 +12,6 @@ const importedHistories = histories;
 export function skitRouteView(
   parameters: SkitRouteParameters
 ): superfine.ElementNode<`body`> {
-  parameters;
-
   const history = importedHistories.tryGetItem(parameters.skitUuid);
 
   if (history === null) {
