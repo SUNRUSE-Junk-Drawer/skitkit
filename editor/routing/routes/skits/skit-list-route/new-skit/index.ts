@@ -41,5 +41,5 @@ export function newSkit(): void {
     undoneSteps: [],
   });
 
-  importedNavigate(`#/skits/${skitUuid}`);
+  importedNavigate(`#skits/${skitUuid}`);
 }

@@ -122,7 +122,7 @@ describe(`newSkit`, () => {
     });
 
     it(`navigates to the skit`, () => {
-      expect(importedNavigate).toHaveBeenCalledWith(`#/skits/Test Skit Uuid`);
+      expect(importedNavigate).toHaveBeenCalledWith(`#skits/Test Skit Uuid`);
     });
 
     it(`sets the history item before navigating`, () => {
