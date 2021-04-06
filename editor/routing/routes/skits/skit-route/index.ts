@@ -33,7 +33,7 @@ export function skitRouteView(
         `article`,
         {},
         superfine.h(
-          `ul`,
+          `p`,
           { className: `error-message` },
           superfine.text(`The skit you have requested cannot be found.`)
         )

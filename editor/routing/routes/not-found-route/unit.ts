@@ -21,7 +21,7 @@ describe(`notFoundRouteView`, () => {
           `article`,
           {},
           superfine.h(
-            `ul`,
+            `p`,
             { className: `error-message` },
             superfine.text(`The page you have requested cannot be found.`)
           )
