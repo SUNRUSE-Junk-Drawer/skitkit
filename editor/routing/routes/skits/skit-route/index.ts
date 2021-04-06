@@ -1,20 +1,19 @@
 import * as superfine from "superfine";
 import { version } from "../../../../../package.json";
-import { histories } from "../../../../histories";
-import { getCurrentFromHistory } from "../../../../history/get-current-from-history";
+import { tryGetCurrentBySkitUuid } from "../../../../history/try-get-current-by-skit-uuid";
 
 export type SkitRouteParameters = {
   readonly skitUuid: string;
 };
 
-const importedHistories = histories;
+const importedTryGetCurrentBySkitUuid = tryGetCurrentBySkitUuid;
 
 export function skitRouteView(
   parameters: SkitRouteParameters
 ): superfine.ElementNode<`body`> {
-  const history = importedHistories.tryGetItem(parameters.skitUuid);
+  const state = importedTryGetCurrentBySkitUuid(parameters.skitUuid);
 
-  if (history === null) {
+  if (state === null) {
     return superfine.h(`body`, {}, [
       superfine.h(`header`, {}, [
         superfine.h(`h1`, {}, [
@@ -38,8 +37,6 @@ export function skitRouteView(
       ),
     ]);
   } else {
-    const state = getCurrentFromHistory(history);
-
     return superfine.h(`body`, {}, [
       superfine.h(`header`, {}, [
         superfine.h(`h1`, {}, [
