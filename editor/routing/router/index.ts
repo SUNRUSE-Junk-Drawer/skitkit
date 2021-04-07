@@ -5,9 +5,17 @@ import {
   notFoundRouteView,
 } from "../routes/not-found-route";
 import {
+  BackgroundListRouteParameters,
+  backgroundListRouteView,
+} from "../routes/skits/backgrounds/background-list-route";
+import {
   skitListRouteView,
   SkitListRouteParameters,
 } from "../routes/skits/skit-list-route";
+import {
+  skitChildNotFoundRouteView,
+  SkitChildNotFoundRouteParameters,
+} from "../routes/skits/skit-child-not-found-route";
 import { skitRouteView, SkitRouteParameters } from "../routes/skits/skit-route";
 
 export function router(
@@ -16,7 +24,9 @@ export function router(
   | Route<HomeRouteParameters>
   | Route<NotFoundRouteParameters>
   | Route<SkitListRouteParameters>
-  | Route<SkitRouteParameters> {
+  | Route<SkitRouteParameters>
+  | Route<BackgroundListRouteParameters>
+  | Route<SkitChildNotFoundRouteParameters> {
   parsedHash;
 
   if (parsedHash.length === 0) {
@@ -32,13 +42,31 @@ export function router(
             parameters: {},
             view: skitListRouteView,
           };
-        } else {
+        } else if (parsedHash.length === 2) {
           return {
             parameters: {
               skitUuid: parsedHash[1],
             },
             view: skitRouteView,
           };
+        } else {
+          switch (parsedHash[2]) {
+            case `backgrounds`:
+              return {
+                parameters: {
+                  skitUuid: parsedHash[1],
+                },
+                view: backgroundListRouteView,
+              };
+
+            default:
+              return {
+                parameters: {
+                  skitUuid: parsedHash[1],
+                },
+                view: skitChildNotFoundRouteView,
+              };
+          }
         }
 
       default:

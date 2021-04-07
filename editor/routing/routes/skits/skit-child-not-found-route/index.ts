@@ -1,15 +1,16 @@
 import * as superfine from "superfine";
 import { tryGetCurrentBySkitUuid } from "../../../../history/try-get-current-by-skit-uuid";
 import { header } from "../../components/header";
+import { notFoundRouteView } from "../../not-found-route";
 
-export type SkitRouteParameters = {
+export type SkitChildNotFoundRouteParameters = {
   readonly skitUuid: string;
 };
 
 const importedTryGetCurrentBySkitUuid = tryGetCurrentBySkitUuid;
 
-export function skitRouteView(
-  parameters: SkitRouteParameters
+export function skitChildNotFoundRouteView(
+  parameters: SkitChildNotFoundRouteParameters
 ): superfine.ElementNode<`body`> {
   const state = importedTryGetCurrentBySkitUuid(parameters.skitUuid);
 
@@ -27,28 +28,11 @@ export function skitRouteView(
       ),
     ]);
   } else {
-    return superfine.h(`body`, {}, [
-      header([
+    return notFoundRouteView({
+      breadcrumb: [
         [`#skits`, `Skits`],
         [`#skits/${parameters.skitUuid}`, state.name],
-      ]),
-      superfine.h(
-        `article`,
-        {},
-        superfine.h(`ul`, { className: `text-list` }, [
-          superfine.h(
-            `li`,
-            {},
-            superfine.h(
-              `a`,
-              {
-                href: `#skits/${parameters.skitUuid}/backgrounds`,
-              },
-              superfine.text(`Backgrounds`)
-            )
-          ),
-        ])
-      ),
-    ]);
+      ],
+    });
   }
 }

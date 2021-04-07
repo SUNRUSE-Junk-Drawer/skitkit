@@ -1,15 +1,23 @@
 import { Route } from "../route";
 import { router } from ".";
-import {
-  skitListRouteView,
-  SkitListRouteParameters,
-} from "../routes/skits/skit-list-route";
 import { HomeRouteParameters, homeRouteView } from "../routes/home-route";
 import {
   NotFoundRouteParameters,
   notFoundRouteView,
 } from "../routes/not-found-route";
-import { SkitRouteParameters, skitRouteView } from "../routes/skits/skit-route";
+import {
+  BackgroundListRouteParameters,
+  backgroundListRouteView,
+} from "../routes/skits/backgrounds/background-list-route";
+import {
+  skitListRouteView,
+  SkitListRouteParameters,
+} from "../routes/skits/skit-list-route";
+import {
+  skitChildNotFoundRouteView,
+  SkitChildNotFoundRouteParameters,
+} from "../routes/skits/skit-child-not-found-route";
+import { skitRouteView, SkitRouteParameters } from "../routes/skits/skit-route";
 
 describe(`router`, () => {
   describe(`no route`, () => {
@@ -17,7 +25,9 @@ describe(`router`, () => {
       | Route<HomeRouteParameters>
       | Route<NotFoundRouteParameters>
       | Route<SkitListRouteParameters>
-      | Route<SkitRouteParameters>;
+      | Route<SkitRouteParameters>
+      | Route<SkitChildNotFoundRouteParameters>
+      | Route<BackgroundListRouteParameters>;
 
     beforeAll(() => {
       route = router([]);
@@ -37,7 +47,9 @@ describe(`router`, () => {
       | Route<HomeRouteParameters>
       | Route<NotFoundRouteParameters>
       | Route<SkitListRouteParameters>
-      | Route<SkitRouteParameters>;
+      | Route<SkitRouteParameters>
+      | Route<SkitChildNotFoundRouteParameters>
+      | Route<BackgroundListRouteParameters>;
 
     beforeAll(() => {
       route = router([`skits`]);
@@ -57,7 +69,9 @@ describe(`router`, () => {
       | Route<HomeRouteParameters>
       | Route<NotFoundRouteParameters>
       | Route<SkitListRouteParameters>
-      | Route<SkitRouteParameters>;
+      | Route<SkitRouteParameters>
+      | Route<SkitChildNotFoundRouteParameters>
+      | Route<BackgroundListRouteParameters>;
 
     beforeAll(() => {
       route = router([`skits`, `Test Skit Uuid`]);
@@ -72,12 +86,58 @@ describe(`router`, () => {
     });
   });
 
+  describe(`background list`, () => {
+    let route:
+      | Route<HomeRouteParameters>
+      | Route<NotFoundRouteParameters>
+      | Route<SkitListRouteParameters>
+      | Route<SkitRouteParameters>
+      | Route<SkitChildNotFoundRouteParameters>
+      | Route<BackgroundListRouteParameters>;
+
+    beforeAll(() => {
+      route = router([`skits`, `Test Skit Uuid`, `backgrounds`]);
+    });
+
+    it(`uses the background list view`, () => {
+      expect(route.view).toBe(backgroundListRouteView);
+    });
+
+    it(`includes the skit UUID as a parameter`, () => {
+      expect(route.parameters).toEqual({ skitUuid: `Test Skit Uuid` });
+    });
+  });
+
+  describe(`skit unknown child`, () => {
+    let route:
+      | Route<HomeRouteParameters>
+      | Route<NotFoundRouteParameters>
+      | Route<SkitListRouteParameters>
+      | Route<SkitRouteParameters>
+      | Route<SkitChildNotFoundRouteParameters>
+      | Route<BackgroundListRouteParameters>;
+
+    beforeAll(() => {
+      route = router([`skits`, `Test Skit Uuid`, `unknown`]);
+    });
+
+    it(`uses the skit child not found view`, () => {
+      expect(route.view).toBe(skitChildNotFoundRouteView);
+    });
+
+    it(`includes the skit UUID as a parameter`, () => {
+      expect(route.parameters).toEqual({ skitUuid: `Test Skit Uuid` });
+    });
+  });
+
   describe(`unknown`, () => {
     let route:
       | Route<HomeRouteParameters>
       | Route<NotFoundRouteParameters>
       | Route<SkitListRouteParameters>
-      | Route<SkitRouteParameters>;
+      | Route<SkitRouteParameters>
+      | Route<SkitChildNotFoundRouteParameters>
+      | Route<BackgroundListRouteParameters>;
 
     beforeAll(() => {
       route = router([`unknown`]);

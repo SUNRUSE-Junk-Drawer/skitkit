@@ -2,18 +2,18 @@ import rewire = require("rewire");
 import * as superfine from "superfine";
 import { tryGetCurrentBySkitUuid } from "../../../../history/try-get-current-by-skit-uuid";
 
-describe(`skitRouteView`, () => {
+describe(`skitChildNotFoundRouteView`, () => {
   describe(`imports`, () => {
-    let skitRouteView: { __get__(name: string): unknown };
+    let skitChildNotFoundRouteView: { __get__(name: string): unknown };
 
     beforeAll(() => {
-      skitRouteView = rewire(`.`);
+      skitChildNotFoundRouteView = rewire(`.`);
     });
 
     it(`tryGetCurrentBySkitUuid`, () => {
-      expect(skitRouteView.__get__(`importedTryGetCurrentBySkitUuid`)).toBe(
-        tryGetCurrentBySkitUuid
-      );
+      expect(
+        skitChildNotFoundRouteView.__get__(`importedTryGetCurrentBySkitUuid`)
+      ).toBe(tryGetCurrentBySkitUuid);
     });
   });
 
@@ -22,18 +22,18 @@ describe(`skitRouteView`, () => {
     let dom: superfine.ElementNode<`body`>;
 
     beforeAll(() => {
-      const skitRouteView = rewire(`.`);
+      const skitChildNotFoundRouteView = rewire(`.`);
 
       importedTryGetCurrentBySkitUuid = jasmine
         .createSpy(`importedTryGetCurrentBySkitUuid`)
         .and.returnValue(null);
 
-      skitRouteView.__set__(
+      skitChildNotFoundRouteView.__set__(
         `importedTryGetCurrentBySkitUuid`,
         importedTryGetCurrentBySkitUuid
       );
 
-      dom = skitRouteView.__get__(`skitRouteView`)({
+      dom = skitChildNotFoundRouteView.__get__(`skitChildNotFoundRouteView`)({
         skitUuid: `Test Skit Uuid`,
       });
     });
@@ -81,7 +81,7 @@ describe(`skitRouteView`, () => {
     let dom: superfine.ElementNode<`body`>;
 
     beforeAll(() => {
-      const skitRouteView = rewire(`.`);
+      const skitChildNotFoundRouteView = rewire(`.`);
 
       importedTryGetCurrentBySkitUuid = jasmine
         .createSpy(`importedTryGetCurrentBySkitUuid`)
@@ -94,12 +94,12 @@ describe(`skitRouteView`, () => {
           lines: {},
         });
 
-      skitRouteView.__set__(
+      skitChildNotFoundRouteView.__set__(
         `importedTryGetCurrentBySkitUuid`,
         importedTryGetCurrentBySkitUuid
       );
 
-      dom = skitRouteView.__get__(`skitRouteView`)({
+      dom = skitChildNotFoundRouteView.__get__(`skitChildNotFoundRouteView`)({
         skitUuid: `Test Skit Uuid`,
       });
     });
@@ -131,23 +131,13 @@ describe(`skitRouteView`, () => {
               ),
             ]),
           ]),
-          superfine.h(
-            `article`,
-            {},
-            superfine.h(`ul`, { className: `text-list` }, [
-              superfine.h(
-                `li`,
-                {},
-                superfine.h(
-                  `a`,
-                  {
-                    href: `#skits/Test Skit Uuid/backgrounds`,
-                  },
-                  superfine.text(`Backgrounds`)
-                )
-              ),
-            ])
-          ),
+          superfine.h(`article`, {}, [
+            superfine.h(
+              `p`,
+              { className: `error-message` },
+              superfine.text(`The page you have requested cannot be found.`)
+            ),
+          ]),
         ])
       );
     });
