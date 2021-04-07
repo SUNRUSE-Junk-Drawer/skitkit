@@ -16,6 +16,7 @@ describe(`notFoundRouteView`, () => {
             superfine.h(`a`, { href: `#` }, superfine.text(`SkitKit`)),
             superfine.h(`sub`, {}, superfine.text(`v999.999.999`)),
           ]),
+          superfine.h(`nav`, {}, []),
         ]),
         superfine.h(
           `article`,

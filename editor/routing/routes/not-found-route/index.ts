@@ -1,5 +1,5 @@
 import * as superfine from "superfine";
-import { version } from "../../../../package.json";
+import { header } from "../components/header";
 export type NotFoundRouteParameters = Record<string, never>;
 
 export function notFoundRouteView(
@@ -8,12 +8,7 @@ export function notFoundRouteView(
   parameters;
 
   return superfine.h(`body`, {}, [
-    superfine.h(`header`, {}, [
-      superfine.h(`h1`, {}, [
-        superfine.h(`a`, { href: `#` }, superfine.text(`SkitKit`)),
-        superfine.h(`sub`, {}, superfine.text(`v${version}`)),
-      ]),
-    ]),
+    header([]),
     superfine.h(
       `article`,
       {},

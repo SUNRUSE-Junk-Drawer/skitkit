@@ -1,6 +1,6 @@
 import * as superfine from "superfine";
-import { version } from "../../../../../package.json";
 import { tryGetCurrentBySkitUuid } from "../../../../history/try-get-current-by-skit-uuid";
+import { header } from "../../components/header";
 
 export type SkitRouteParameters = {
   readonly skitUuid: string;
@@ -15,17 +15,7 @@ export function skitRouteView(
 
   if (state === null) {
     return superfine.h(`body`, {}, [
-      superfine.h(`header`, {}, [
-        superfine.h(`h1`, {}, [
-          superfine.h(`a`, { href: `#` }, superfine.text(`SkitKit`)),
-          superfine.h(`sub`, {}, superfine.text(`v${version}`)),
-        ]),
-        superfine.h(
-          `nav`,
-          {},
-          superfine.h(`a`, { href: `#skits` }, superfine.text(`Skits`))
-        ),
-      ]),
+      header([[`#skits`, `Skits`]]),
       superfine.h(
         `article`,
         {},
@@ -38,19 +28,9 @@ export function skitRouteView(
     ]);
   } else {
     return superfine.h(`body`, {}, [
-      superfine.h(`header`, {}, [
-        superfine.h(`h1`, {}, [
-          superfine.h(`a`, { href: `#` }, superfine.text(`SkitKit`)),
-          superfine.h(`sub`, {}, superfine.text(`v${version}`)),
-        ]),
-        superfine.h(`nav`, {}, [
-          superfine.h(`a`, { href: `#skits` }, superfine.text(`Skits`)),
-          superfine.h(
-            `a`,
-            { href: `#skits/${parameters.skitUuid}` },
-            superfine.text(state.name)
-          ),
-        ]),
+      header([
+        [`#skits`, `Skits`],
+        [`#skits/${parameters.skitUuid}`, state.name],
       ]),
     ]);
   }

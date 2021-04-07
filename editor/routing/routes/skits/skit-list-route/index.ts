@@ -1,7 +1,7 @@
 import * as superfine from "superfine";
-import { version } from "../../../../../package.json";
 import { histories } from "../../../../histories";
 import { getCurrentBySkitUuid } from "../../../../history/get-current-by-skit-uuid";
+import { header } from "../../components/header";
 import { newSkit } from "./new-skit";
 
 export type SkitListRouteParameters = Record<string, never>;
@@ -49,17 +49,7 @@ export function skitListRouteView(
   }
 
   return superfine.h(`body`, {}, [
-    superfine.h(`header`, {}, [
-      superfine.h(`h1`, {}, [
-        superfine.h(`a`, { href: `#` }, superfine.text(`SkitKit`)),
-        superfine.h(`sub`, {}, superfine.text(`v${version}`)),
-      ]),
-      superfine.h(
-        `nav`,
-        {},
-        superfine.h(`a`, { href: `#skits` }, superfine.text(`Skits`))
-      ),
-    ]),
+    header([[`#skits`, `Skits`]]),
     superfine.h(`article`, {}, list),
     superfine.h(
       `footer`,
