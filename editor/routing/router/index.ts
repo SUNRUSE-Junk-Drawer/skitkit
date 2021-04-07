@@ -43,7 +43,9 @@ export function router(
 
       default:
         return {
-          parameters: {},
+          parameters: {
+            breadcrumb: [],
+          },
           view: notFoundRouteView,
         };
     }

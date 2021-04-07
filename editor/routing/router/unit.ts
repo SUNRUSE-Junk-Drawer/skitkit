@@ -87,8 +87,10 @@ describe(`router`, () => {
       expect(route.view).toBe(notFoundRouteView);
     });
 
-    it(`does not include any parameters`, () => {
-      expect(route.parameters).toEqual({});
+    it(`uses an empty breadcrumb`, () => {
+      expect(route.parameters).toEqual({
+        breadcrumb: [],
+      });
     });
   });
 });

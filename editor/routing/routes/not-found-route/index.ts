@@ -1,14 +1,15 @@
 import * as superfine from "superfine";
 import { header } from "../components/header";
-export type NotFoundRouteParameters = Record<string, never>;
+
+export type NotFoundRouteParameters = {
+  readonly breadcrumb: ReadonlyArray<readonly [string, string]>;
+};
 
 export function notFoundRouteView(
   parameters: NotFoundRouteParameters
 ): superfine.ElementNode<`body`> {
-  parameters;
-
   return superfine.h(`body`, {}, [
-    header([]),
+    header(parameters.breadcrumb),
     superfine.h(
       `article`,
       {},
