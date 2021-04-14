@@ -43,7 +43,7 @@
     "superfine": "8.2.0",
     "ts-node": "9.1.1",
     "typescript": "4.2.4",
-    "webpack": "5.32.0",
+    "webpack": "5.33.2",
     "webpack-cli": "4.6.0",
     "workbox-webpack-plugin": "6.1.5"
   },
